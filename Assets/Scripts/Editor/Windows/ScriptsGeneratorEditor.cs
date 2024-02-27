@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEditor;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class ScriptsGeneratorEditor : EditorWindow
@@ -15,7 +12,8 @@ public class ScriptsGeneratorEditor : EditorWindow
         MonoBehaviour,
         ChildClass,
         BaseClass,
-        ScriptableObject
+        ScriptableObject,
+        Interface
     }
 
     private enum ClassAccessModifier
@@ -38,6 +36,9 @@ public class ScriptsGeneratorEditor : EditorWindow
     private const string PUBLIC_CLASS_ACCESS_MODIFIER = "public";
     private const string PRIVATE_CLASS_ACCESS_MODIFIER = "private";
 
+    private const string CLASS = "class";
+    private const string INTERFACE = "interface";
+
     private StringBuilder _stringBuilder = new StringBuilder();
 
     private ClassAccessModifier _classAccessModifier;
@@ -56,7 +57,8 @@ public class ScriptsGeneratorEditor : EditorWindow
 #endregion
 
 #region Properties
-    private bool CanBeAbstract => _classType != ClassType.ScriptableObject;
+    private bool CanBeAbstract => _classType != ClassType.ScriptableObject &&
+                                  _classType != ClassType.Interface;
     private bool CanBeStatic => _classType == ClassType.BaseClass;
 #endregion
 
@@ -166,6 +168,7 @@ public class ScriptsGeneratorEditor : EditorWindow
                     break;
 
                 case ClassType.ChildClass:
+                case ClassType.Interface:
                     _parentClassName = EditorGUILayout.TextField(_parentClassName);
                     break;
             } 
@@ -276,6 +279,16 @@ public class ScriptsGeneratorEditor : EditorWindow
         }
     }
 
+    private string GetClassType()
+    {
+        if(_classType == ClassType.Interface)
+        {
+            return INTERFACE;
+        }
+
+        return CLASS;
+    }
+
     private string GetClassName()
     {
         return _className;
@@ -286,23 +299,34 @@ public class ScriptsGeneratorEditor : EditorWindow
         if(_classType == ClassType.BaseClass)
             return string.Empty;
 
+        string parentClassName;
         _stringBuilder.Clear();
-        _stringBuilder.Append(" : ");
 
         switch (_classType)
         {
             case ClassType.MonoBehaviour:
             default:
-                _stringBuilder.Append(MONO_BEHAVIOUR);
+                parentClassName = MONO_BEHAVIOUR;
                 break;
 
             case ClassType.ScriptableObject:
-                _stringBuilder.Append(SCRIPTABLE_OBJ);
+                parentClassName = SCRIPTABLE_OBJ;
                 break;
 
             case ClassType.ChildClass:
-                _stringBuilder.Append(_parentClassName);
+            case ClassType.Interface:
+                parentClassName = _parentClassName;
                 break;
+        }
+
+        if (!string.IsNullOrEmpty(parentClassName))
+        {
+            _stringBuilder.Append(" : ");
+            _stringBuilder.Append(parentClassName);
+        }
+        else
+        {
+            return parentClassName;
         }
 
         return _stringBuilder.ToString();
@@ -318,7 +342,7 @@ public class ScriptsGeneratorEditor : EditorWindow
 
     private string GetClassSignature()
     {
-        return $"{GetAccessModifier()}{GetClassModifier()} class {GetClassName()}{GetParentClassName()}";
+        return $"{GetAccessModifier()}{GetClassModifier()} {GetClassType()} {GetClassName()}{GetParentClassName()}";
     }
 #endregion
 
