@@ -14,7 +14,8 @@ public class ScriptsGeneratorEditor : EditorWindow
     {
         MonoBehaviour,
         ChildClass,
-        BaseClass
+        BaseClass,
+        ScriptableObject
     }
 
     private enum ClassAccessModifier
@@ -28,7 +29,8 @@ public class ScriptsGeneratorEditor : EditorWindow
 	private const string BASE_SCRIPTS_PATH = "Assets/Scripts";
 
     private const string BASE_NAMESPACE = "LKS";
-	private const string MONOBEHAVIOUR = "MonoBehaviour";
+	private const string MONO_BEHAVIOUR = "MonoBehaviour";
+	private const string SCRIPTABLE_OBJ = "ScriptableObject";
 
 	private const string SATIC_CLASS_MODIFIER = "static";
 	private const string ABSTRACT_CLASS_MODIFIER = "abstract";
@@ -46,8 +48,16 @@ public class ScriptsGeneratorEditor : EditorWindow
     private string _className;
     private string _parentClassName;
 
+    private string _scriptableFileName;
+    private string _scriptableMenuName;
+
     private bool _isAbstract;
     private bool _isStatic;
+    #endregion
+
+    #region Properties
+    private bool CanBeAbstract => _classType != ClassType.ScriptableObject;
+    private bool CanBeStatic => _classType == ClassType.BaseClass;
     #endregion
 
     #region Public Methods
@@ -127,16 +137,18 @@ public class ScriptsGeneratorEditor : EditorWindow
         _classAccessModifier = (ClassAccessModifier)EditorGUILayout.EnumPopup("Access Modifier", _classAccessModifier);
         _classType = (ClassType)EditorGUILayout.EnumPopup("Class Type", _classType);
 
-        _isAbstract = EditorGUILayout.Toggle("Is Abstract", _isAbstract);
-        _isStatic = EditorGUILayout.Toggle("Is Static", _isStatic);
+        if (CanBeAbstract)
+        {
+            _isAbstract = EditorGUILayout.Toggle("Is Abstract", _isAbstract); 
+        }
+
+        if (CanBeStatic)
+        {
+            _isStatic = EditorGUILayout.Toggle("Is Static", _isStatic); 
+        }
 
         BeginSection("Class Name:", true);
         _className = EditorGUILayout.TextField(_className);
-
-        if (_isStatic && _classType == ClassType.MonoBehaviour)
-        {
-            _classType = ClassType.BaseClass;
-        }
 
         if (_classType != ClassType.BaseClass)
         {
@@ -146,7 +158,11 @@ public class ScriptsGeneratorEditor : EditorWindow
             {
                 case ClassType.MonoBehaviour:
                 default:
-                    EditorGUIHelper.MediumLabel(MONOBEHAVIOUR);
+                    EditorGUIHelper.MediumLabel(MONO_BEHAVIOUR);
+                    break;
+
+                case ClassType.ScriptableObject:
+                    EditorGUIHelper.MediumLabel(SCRIPTABLE_OBJ);
                     break;
 
                 case ClassType.ChildClass:
@@ -157,11 +173,16 @@ public class ScriptsGeneratorEditor : EditorWindow
 
         EndSection();
 
+        if(_classType == ClassType.ScriptableObject)
+        {
+            _scriptableFileName = EditorGUILayout.TextField("File Name", _scriptableFileName);
+            _scriptableMenuName = EditorGUILayout.TextField("Menu Name", _scriptableMenuName);
+        }
     }
 
     private void SignatureOverviewSection()
     {
-        BeginSection("Class Signature:");
+        BeginSection("Class Signature:", _classType == ClassType.ScriptableObject);
         EditorGUIHelper.Label(GetClassSignature(), EditorStyles.wordWrappedLabel);
         EndSection();
     }
@@ -191,15 +212,13 @@ public class ScriptsGeneratorEditor : EditorWindow
 
         switch (_classType)
         {
-            case ClassType.MonoBehaviour:
-            case ClassType.BaseClass:
             default:
                 return isNameValid;
 
             case ClassType.ChildClass:
                 return isNameValid && isParentNameValid;
         }
-    }
+    }    
 
     private string GlobalToLocalPath(string path)
     {
@@ -274,7 +293,11 @@ public class ScriptsGeneratorEditor : EditorWindow
         {
             case ClassType.MonoBehaviour:
             default:
-                _stringBuilder.Append(MONOBEHAVIOUR);
+                _stringBuilder.Append(MONO_BEHAVIOUR);
+                break;
+
+            case ClassType.ScriptableObject:
+                _stringBuilder.Append(SCRIPTABLE_OBJ);
                 break;
 
             case ClassType.ChildClass:
@@ -283,6 +306,14 @@ public class ScriptsGeneratorEditor : EditorWindow
         }
 
         return _stringBuilder.ToString();
+    }
+
+    private string GetCreateMenu()
+    {
+        if (_classType != ClassType.ScriptableObject)
+            return string.Empty;
+
+        return $"\n[CreateAssetMenu(fileName = \"{_scriptableFileName}\", menuName = \"{_scriptableMenuName}\")]";
     }
 
     private string GetClassSignature()
@@ -321,7 +352,7 @@ public class ScriptsGeneratorEditor : EditorWindow
         return $@"using UnityEngine;
 
 namespace {GetNamespace()}
-{{
+{{{GetCreateMenu()}
     {GetClassSignature()}
     {{
         
