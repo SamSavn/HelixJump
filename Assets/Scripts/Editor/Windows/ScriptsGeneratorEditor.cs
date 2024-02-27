@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class ScriptsGeneratorEditor : EditorWindow
 {
-    #region Enums
+#region Enums
     private enum ClassType
     {
         MonoBehaviour,
@@ -23,9 +23,9 @@ public class ScriptsGeneratorEditor : EditorWindow
         Public,
         Private
     }
-    #endregion
+#endregion
 
-    #region Constants & Fields
+#region Constants & Fields
 	private const string BASE_SCRIPTS_PATH = "Assets/Scripts";
 
     private const string BASE_NAMESPACE = "LKS";
@@ -53,23 +53,23 @@ public class ScriptsGeneratorEditor : EditorWindow
 
     private bool _isAbstract;
     private bool _isStatic;
-    #endregion
+#endregion
 
-    #region Properties
+#region Properties
     private bool CanBeAbstract => _classType != ClassType.ScriptableObject;
     private bool CanBeStatic => _classType == ClassType.BaseClass;
-    #endregion
+#endregion
 
-    #region Public Methods
+#region Public Methods
 
     [MenuItem("Window/Script Generator")]
     public static void ShowWindow()
     {
         GetWindow<ScriptsGeneratorEditor>("Script Generator").Show();
     }
-    #endregion
+#endregion
 
-    #region GUI Methods
+#region GUI Methods
     private void OnGUI()
     {
         EditorGUIHelper.Label("Set the fields for creating the script");
@@ -85,9 +85,9 @@ public class ScriptsGeneratorEditor : EditorWindow
 
         GenerateButtonSection();
     }
-    #endregion
+#endregion
 
-    #region GUI Sections
+#region GUI Sections
     private void BeginSection(string name, bool addSpace = false)
     {
         if (addSpace)
@@ -197,9 +197,9 @@ public class ScriptsGeneratorEditor : EditorWindow
             Generate();
         }
     }
-    #endregion
+#endregion
 
-    #region Utils Methods
+#region Utils Methods
     private bool ValidatePath()
     {
         return !string.IsNullOrEmpty(_path);
@@ -320,9 +320,9 @@ public class ScriptsGeneratorEditor : EditorWindow
     {
         return $"{GetAccessModifier()}{GetClassModifier()} class {GetClassName()}{GetParentClassName()}";
     }
-    #endregion
+#endregion
 
-    #region Private Methods
+#region Private Methods
     private void Generate()
     {
         string fullPath = Path.Combine(_path, $"{_className}.cs");
@@ -344,9 +344,9 @@ public class ScriptsGeneratorEditor : EditorWindow
             Debug.LogError($"Error generating script: {e.Message}");
         }
     }
-    #endregion
+#endregion
 
-    #region Templates
+#region Templates
     private string GetScriptTemplate()
     {
         return $@"using UnityEngine;
@@ -359,5 +359,5 @@ namespace {GetNamespace()}
     }}
 }}";
     }
-    #endregion
+#endregion
 }

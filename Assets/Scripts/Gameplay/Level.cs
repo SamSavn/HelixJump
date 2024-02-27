@@ -7,16 +7,16 @@ namespace LKS.Gameplay
 {
     public class Level : MonoBehaviour
     {
-        #region Serialized Fields
+#region Serialized Fields
         [SerializeField] private LevelGenerationData generationData;
-        #endregion
+#endregion
 
-        #region Fields
+#region Fields
         private LevelGenerator _levelGenerator;
         private List<Platform> _platforms = new List<Platform>();
-        #endregion
+#endregion
 
-        #region Unity Methods
+#region Unity Methods
         private void Awake()
         {
             _levelGenerator = new LevelGenerator(generationData);
@@ -26,6 +26,6 @@ namespace LKS.Gameplay
         {
             _platforms = _levelGenerator.Generate(transform, 10);
         } 
-        #endregion
+#endregion
     }
 }

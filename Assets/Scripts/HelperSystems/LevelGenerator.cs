@@ -7,28 +7,28 @@ namespace LKS.Helpers
 {
     public class LevelGenerator
     {
-        #region Constants & Fields
+#region Constants & Fields
         private const float PLATFORMS_DISTANCE = .5f;
-        #endregion
+#endregion
 
-        #region Fields
+#region Fields
         private LevelGenerationData _levelGenerationData;
         private Transform _tower;
 
+        private List<Platform> _level = new ();
+
         private Vector3 _platformPosition;
         private Vector3 _platformRotation;
+#endregion
 
-        private List<Platform> _level = new ();
-        #endregion
-
-        #region Constructors
+#region Constructors
         public LevelGenerator(LevelGenerationData levelGenerationData)
         {
             _levelGenerationData = levelGenerationData;
         }
-        #endregion
+#endregion
 
-        #region Public Methods
+#region Public Methods
         public List<Platform> Generate(Transform tower, int levels)
         {
             _tower = tower;
@@ -40,12 +40,12 @@ namespace LKS.Helpers
 
             return _level;
         }
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
         private void GeneratePlaform(int index)
         {
-            float platformHeight = index * PLATFORMS_DISTANCE;
+            float platformHeight = -index * PLATFORMS_DISTANCE;
             _platformPosition = new Vector3(0f, platformHeight, 0f);
 
             float randomRotationAngle = Random.Range(0f, 360f);
@@ -58,6 +58,6 @@ namespace LKS.Helpers
 
             _level.Add(platform);
         }
-        #endregion
+#endregion
     }
 }

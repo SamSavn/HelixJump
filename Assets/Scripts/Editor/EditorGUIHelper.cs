@@ -3,7 +3,7 @@ using UnityEditor;
 
 public static class EditorGUIHelper
 {
-    #region Constants
+#region Constants
     public const int SMALL_BTN_SIZE = 25;
     public const int MEDIUM_BTN_SIZE = 50;
     public const int BIG_BTN_SIZE = 100;
@@ -11,9 +11,9 @@ public static class EditorGUIHelper
     public const int SMALL_LABEL_SIZE = 50;
     public const int MEDIUM_LABEL_SIZE = 100;
     public const int BIG_LABEL_SIZE = 200;
-    #endregion
+#endregion
 
-    #region GUI Elements
+#region GUI Elements
     public static void Label(string text, params GUILayoutOption[] options)
 	{
         GUILayout.Label(text, options);
@@ -63,5 +63,5 @@ public static class EditorGUIHelper
     {
         return Button(text, GUILayout.Width(BIG_BTN_SIZE));
     }
-    #endregion
+#endregion
 }
