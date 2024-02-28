@@ -63,6 +63,9 @@ public class ScriptsGeneratorEditor : EditorWindow
     private bool CanBeAbstract => _classType != ClassType.ScriptableObject &&
                                   _classType != ClassType.Interface;
     private bool CanBeStatic => _classType == ClassType.BaseClass;
+
+    private bool CanInherit => !(_isStatic && _classType == ClassType.BaseClass) && 
+                                _classType != ClassType.Interface;
 #endregion
 
 #region Public Methods
@@ -158,14 +161,13 @@ public class ScriptsGeneratorEditor : EditorWindow
         BeginSection("Class Name:", true);
         _className = EditorGUILayout.TextField(_className);
 
-        if (_classType != ClassType.BaseClass)
+        if (CanInherit)
         {
             EditorGUIHelper.Label(":", GUILayout.Width(10));
 
             switch (_classType)
             {
                 case ClassType.MonoBehaviour:
-                default:
                     EditorGUIHelper.MediumLabel(MONO_BEHAVIOUR);
                     break;
 
@@ -174,7 +176,7 @@ public class ScriptsGeneratorEditor : EditorWindow
                     break;
 
                 case ClassType.ChildClass:
-                case ClassType.Interface:
+                default:
                     _parentClassName = EditorGUILayout.TextField(_parentClassName);
                     break;
             } 
@@ -350,7 +352,7 @@ public class ScriptsGeneratorEditor : EditorWindow
 
     private string GetParentClassName()
     {
-        if(_classType == ClassType.BaseClass)
+        if(!CanInherit)
             return string.Empty;
 
         string parentClassName;
@@ -359,7 +361,6 @@ public class ScriptsGeneratorEditor : EditorWindow
         switch (_classType)
         {
             case ClassType.MonoBehaviour:
-            default:
                 parentClassName = MONO_BEHAVIOUR;
                 break;
 
@@ -368,7 +369,7 @@ public class ScriptsGeneratorEditor : EditorWindow
                 break;
 
             case ClassType.ChildClass:
-            case ClassType.Interface:
+            default:
                 parentClassName = _parentClassName;
                 break;
         }
@@ -436,7 +437,8 @@ public class ScriptsGeneratorEditor : EditorWindow
     #region Private Methods
     private void Generate()
     {
-        string fullPath = Path.Combine(_path, $"{_className}.cs");
+        string fileName = _className.Contains("<") ? _className.Split("<")[0] : _className;
+        string fullPath = Path.Combine(_path, $"{fileName}.cs");
 
         if (File.Exists(fullPath))
         {
