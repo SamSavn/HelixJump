@@ -84,6 +84,9 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
+    - Data
+    - GameElement
+    - GameView
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: a0af765677599cf4aa80a5040698e2cb, type: 2}

@@ -1,3 +1,4 @@
+using LKS.AssetsManagement;
 using LKS.Data;
 using LKS.Extentions;
 using LKS.Helpers;
@@ -9,12 +10,11 @@ namespace LKS.Gameplay
 {
     public class Tower : GameElement
     {
-#region Serialized Fields
-        [SerializeField] private LevelGenerationData generationData;
-#endregion
-
 #region Fields
+        private const string GENERATION_DATA_ADDRESS = "LevelGenerationData";
         private const int ADDITIONAL_PLATFORMS_OFFSET = 3;
+
+        private LevelGenerationData _generationData;
         private LevelGenerator _levelGenerator;
         private List<Platform> _platforms = new List<Platform>();
 
@@ -32,9 +32,17 @@ namespace LKS.Gameplay
 #region Unity Methods
         private void Awake()
         {
-            _levelGenerator = new LevelGenerator(generationData);
+            _generationData = AddressablesLoader.LoadSingle<LevelGenerationData>(GENERATION_DATA_ADDRESS);
 
-            _globalPlatformsDistance = transform.TransformPoint(new Vector3(0, generationData.PlatformsDistance, 0)).y;
+            if(_generationData == null)
+            {
+                Debug.LogError("Unable to load level generation data");
+                return;
+            }
+
+            _levelGenerator = new LevelGenerator(_generationData);
+
+            _globalPlatformsDistance = transform.TransformPoint(new Vector3(0, _generationData.PlatformsDistance, 0)).y;
             _position = transform.position.y;
             _height = transform.lossyScale.y;
 
@@ -43,7 +51,7 @@ namespace LKS.Gameplay
 
         private void Start()
         {
-            _platforms = _levelGenerator.Generate(this, 10);
+            _platforms = _levelGenerator?.Generate(this, 10);
         }
 #endregion
 
