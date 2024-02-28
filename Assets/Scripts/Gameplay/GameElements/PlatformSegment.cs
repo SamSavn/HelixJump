@@ -22,14 +22,14 @@ namespace LKS.GameElements
             _platform.OnToggle += OnPlatformToggle;
 
             _activeForLevel = activeForLevel;
-            Toggle(_activeForLevel);
+            SetActive(_activeForLevel);
         }
 
-        public void Toggle(bool value)
+        public override void SetActive(bool active)
         {
-            _mesh.SetActive(value);
-            _collider.enabled = value;
-            _renderer.enabled = value;
+            _mesh.SetActive(active);
+            _collider.enabled = active;
+            _renderer.enabled = active;
         }
 #endregion
 
@@ -39,7 +39,7 @@ namespace LKS.GameElements
             if (!_activeForLevel)
                 return;
 
-            Toggle(value);
+            SetActive(value);
         }
 #endregion
     }

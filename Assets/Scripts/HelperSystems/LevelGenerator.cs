@@ -1,4 +1,3 @@
-using LKS.AssetsManagement;
 using LKS.Data;
 using LKS.GameElements;
 using LKS.Managers;
@@ -23,7 +22,7 @@ namespace LKS.Helpers
         private Platform _newPlatform;
 #endregion
 
-        #region Constructors
+#region Constructors
         public LevelGenerator(LevelGenerationData levelGenerationData)
         {
             _levelGenerationData = levelGenerationData;

@@ -434,7 +434,7 @@ public class ScriptsGeneratorEditor : EditorWindow
     }
     #endregion
 
-    #region Private Methods
+#region Private Methods
     private void Generate()
     {
         string fileName = _className.Contains("<") ? _className.Split("<")[0] : _className;
