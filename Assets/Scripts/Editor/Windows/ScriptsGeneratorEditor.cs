@@ -89,6 +89,8 @@ public class ScriptsGeneratorEditor : EditorWindow
         InterfaceSection();
         SignatureOverviewSection();
 
+        WarningsSection();
+
         GenerateButtonSection();
     }
 #endregion
@@ -223,6 +225,23 @@ public class ScriptsGeneratorEditor : EditorWindow
         BeginSection("Class Signature:", _classType == ClassType.ScriptableObject);
         EditorGUIHelper.Label(GetClassSignature(), EditorStyles.wordWrappedLabel);
         EndSection();
+    }
+
+    private void WarningsSection()
+    {
+        GUILayout.Space(10);
+
+        if(string.IsNullOrEmpty(_namespace))
+        {
+            EditorGUIHelper.WarningLabel("WARNING: No additional namespace has been set");
+        }
+
+        if (string.IsNullOrEmpty(_className))
+        {
+            EditorGUIHelper.ErrorLabel("Class Name is a required field");
+        }
+
+        GUILayout.Space(10);
     }
 
     private void GenerateButtonSection()
@@ -382,6 +401,11 @@ public class ScriptsGeneratorEditor : EditorWindow
 
             if (string.IsNullOrEmpty(itf))
                 continue;
+
+            if (i == 0 && string.IsNullOrEmpty(parentClass))
+            {
+                _stringBuilder.Append(" : ");
+            }
 
             if ((i == 0 && !string.IsNullOrEmpty(parentClass)) || 
                 (i > 0 && _stringBuilder.Length > 0))

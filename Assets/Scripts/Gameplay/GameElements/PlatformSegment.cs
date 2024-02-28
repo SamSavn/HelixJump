@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace LKS.Gameplay
 {
-    public class PlatformSegment : MonoBehaviour
+    public class PlatformSegment : GameElement
     {
 #region Constants & Fields
         private Platform _platform;

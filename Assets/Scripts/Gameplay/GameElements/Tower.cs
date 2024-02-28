@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LKS.Gameplay
 {
-    public class Tower : MonoBehaviour
+    public class Tower : GameElement
     {
 #region Serialized Fields
         [SerializeField] private LevelGenerationData generationData;

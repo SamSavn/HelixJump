@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 namespace LKS.Gameplay
 {
-    public class Platform : MonoBehaviour
+    public class Platform : GameElement
     {
 #region Constants & Fields
         public event Action<bool> OnToggle;

@@ -44,6 +44,24 @@ public static class EditorGUIHelper
         Label(text, EditorStyles.boldLabel, options);
     }
 
+    public static void ColoredLabel(string text, GUIStyle style, Color color, params GUILayoutOption[] options)
+    {
+        Color originalColor = GUI.color;
+        GUI.color = color;
+        Label(text, style, options);
+        GUI.color = originalColor;
+    }
+
+    public static void WarningLabel(string text, params GUILayoutOption[] options)
+    {
+        ColoredLabel(text, EditorStyles.helpBox, Color.yellow, options);
+    }
+
+    public static void ErrorLabel(string text, params GUILayoutOption[] options)
+    {
+        ColoredLabel(text, EditorStyles.helpBox, Color.red, options);
+    }
+
     public static bool Button(string text, params GUILayoutOption[] options)
     {
         return GUILayout.Button(text, options);
