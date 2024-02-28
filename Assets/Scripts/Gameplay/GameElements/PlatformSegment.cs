@@ -7,7 +7,6 @@ namespace LKS.Gameplay
 #region Constants & Fields
         private Platform _platform;
         private bool _activeForLevel;
-        private int _id;
 #endregion
 
 #region Serialized Fields
@@ -17,12 +16,10 @@ namespace LKS.Gameplay
 #endregion
 
 #region Public Methods
-        public void Initialize(Platform platform, int id, bool activeForLevel)
+        public void Initialize(Platform platform, bool activeForLevel)
         {
             _platform = platform;
             _platform.OnToggle += OnPlatformToggle;
-            
-            _id = id;
 
             _activeForLevel = activeForLevel;
             Toggle(_activeForLevel);
@@ -32,9 +29,9 @@ namespace LKS.Gameplay
         {
             _mesh.SetActive(value);
         }
-        #endregion
+#endregion
 
-        #region Event Handlers
+#region Event Handlers
         private void OnPlatformToggle(bool value)
         {
             if (!_activeForLevel)
@@ -42,11 +39,6 @@ namespace LKS.Gameplay
 
             Toggle(value);
         }
-
-        private void OnPlatformRandomized(int id, bool value)
-        {
-
-        }
-        #endregion
+#endregion
     }
 }

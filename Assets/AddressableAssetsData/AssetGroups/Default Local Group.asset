@@ -22,6 +22,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Data
+  - m_GUID: da4adfa6dcc7c524bbd5c3882e542954
+    m_Address: Platform
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - GameElement
+  - m_GUID: 17c947276c140e54a85fcecf4e5dc038
+    m_Address: Obstacle
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - GameElement
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7e70cd30ecbfa3d468d4c25cd27eb898, type: 2}
   m_SchemaSet:
