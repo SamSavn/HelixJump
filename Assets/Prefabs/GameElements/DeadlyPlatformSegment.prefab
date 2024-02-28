@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4187972890837249141}
   - component: {fileID: 3908501111427671218}
   m_Layer: 0
-  m_Name: PlatformSegment
+  m_Name: DeadlyPlatformSegment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -118,14 +118,14 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 0f9e5cf473a97f9448d8488ebe1709e7, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 62ceb8b8e24aa4846bb9f93ec1524fed, type: 2}
+      objectReference: {fileID: 2100000, guid: 7dc9b91b2bafa9a4a95a65b23f81fe60, type: 2}
     - target: {fileID: 919132149155446097, guid: 0f9e5cf473a97f9448d8488ebe1709e7, type: 3}
       propertyPath: m_Name
       value: helix piece
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0f9e5cf473a97f9448d8488ebe1709e7, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f9e5cf473a97f9448d8488ebe1709e7, type: 3}
