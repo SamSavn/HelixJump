@@ -46,7 +46,7 @@ namespace LKS.Helpers
 #region Private Methods
         private void GeneratePlaform(int index)
         {
-            _newPlatform = AssetsManager.GetPlatform();
+            _newPlatform = PoolingManager.GetFromPool<Platform>();
 
             if (_newPlatform == null)
                 return;
