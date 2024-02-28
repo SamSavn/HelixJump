@@ -1,5 +1,5 @@
-using LKS.AssetsManagement;
 using LKS.Extentions;
+using LKS.Helpers;
 using LKS.Managers;
 using System;
 using UnityEngine;
@@ -10,10 +10,7 @@ namespace LKS.Gameplay
     public class Platform : GameElement
     {
 #region Constants & Fields
-        private const string OBSTACLE_PREFAB_ADDRESS = "Obstacle";
         public event Action<bool> OnToggle;
-
-        private GameObject _obstaclePrefab;
 #endregion
 
 #region Serialized Fields
@@ -25,11 +22,6 @@ namespace LKS.Gameplay
         #endregion
 
 #region Unity Methods
-        private void Awake()
-        {
-            _obstaclePrefab = AddressablesLoader.LoadSingle<GameObject>(OBSTACLE_PREFAB_ADDRESS);
-        }
-
         private void Reset()
         {
 #if UNITY_EDITOR
@@ -56,12 +48,12 @@ namespace LKS.Gameplay
                 _segments[i].Initialize(this, Random.value <= randomizationFactor);
             }
 
-            Toggle(GameManager.Tower.CanActivate(this));
-        } 
+            SetActive(GameManager.Tower.CanActivate(this));
+        }
 
-        public void Toggle(bool enable)
+        public override void SetActive(bool active)
         {
-            OnToggle?.Invoke(enable);
+            OnToggle?.Invoke(active);
         }
 #endregion
     }

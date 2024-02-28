@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.ResourceLocations;
 
-namespace LKS.AssetsManagement
+namespace LKS.Helpers
 {
     public static class AddressablesLoader
     {
