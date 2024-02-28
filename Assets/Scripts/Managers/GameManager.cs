@@ -1,4 +1,4 @@
-using LKS.Gameplay;
+using LKS.GameElements;
 using UnityEngine;
 
 namespace LKS.Managers

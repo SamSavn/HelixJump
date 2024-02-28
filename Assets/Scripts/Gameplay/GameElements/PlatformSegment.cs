@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace LKS.Gameplay
+namespace LKS.GameElements
 {
     public class PlatformSegment : GameElement
     {
@@ -28,6 +28,8 @@ namespace LKS.Gameplay
         public void Toggle(bool value)
         {
             _mesh.SetActive(value);
+            _collider.enabled = value;
+            _renderer.enabled = value;
         }
 #endregion
 
