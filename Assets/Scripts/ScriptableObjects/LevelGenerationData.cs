@@ -6,7 +6,9 @@ namespace LKS.Data
     public class LevelGenerationData : ScriptableObject
     {
         [SerializeField] private GameObject _platformPrefab;
+        [SerializeField] private float _platformsDistance;
 
         public GameObject PlatformPrefab => _platformPrefab;
+        public float PlatformsDistance => _platformsDistance;
     }
 }

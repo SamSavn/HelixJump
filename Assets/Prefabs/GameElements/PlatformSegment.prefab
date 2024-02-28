@@ -119,6 +119,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: helix piece
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0f9e5cf473a97f9448d8488ebe1709e7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f9e5cf473a97f9448d8488ebe1709e7, type: 3}
 --- !u!1 &395252133247371042 stripped

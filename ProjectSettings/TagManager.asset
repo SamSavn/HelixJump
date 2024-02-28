@@ -11,11 +11,11 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
+  - PlatformSegment
+  - Platform
+  - Tower
+  - Ball
+  - RedPlatformSegment
   - 
   - 
   - 
