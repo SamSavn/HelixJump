@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEditor;
@@ -40,6 +41,7 @@ public class ScriptsGeneratorEditor : EditorWindow
     private const string INTERFACE = "interface";
 
     private StringBuilder _stringBuilder = new StringBuilder();
+    private List<string> _interfaces = new();
 
     private ClassAccessModifier _classAccessModifier;
     private ClassType _classType;
@@ -54,6 +56,7 @@ public class ScriptsGeneratorEditor : EditorWindow
 
     private bool _isAbstract;
     private bool _isStatic;
+    private bool _implementInterfaces;
 #endregion
 
 #region Properties
@@ -83,6 +86,7 @@ public class ScriptsGeneratorEditor : EditorWindow
 
         NamespaceSection();
         ClassSection();
+        InterfaceSection();
         SignatureOverviewSection();
 
         GenerateButtonSection();
@@ -181,6 +185,37 @@ public class ScriptsGeneratorEditor : EditorWindow
             _scriptableFileName = EditorGUILayout.TextField("File Name", _scriptableFileName);
             _scriptableMenuName = EditorGUILayout.TextField("Menu Name", _scriptableMenuName);
         }
+    }
+
+    private void InterfaceSection()
+    {
+        _implementInterfaces = EditorGUILayout.Toggle("Implement Interfaces", _implementInterfaces);
+
+        if (!_implementInterfaces)
+        {
+            _interfaces.Clear();
+            return;
+        }
+
+        BeginSection("Interfaces:");
+        if (EditorGUIHelper.MediumButton("Add"))
+        {
+            _interfaces.Add("");
+        }
+        EndSection();
+
+        EditorGUI.indentLevel++;
+        for (int i = 0; i < _interfaces.Count; i++)
+        {
+            GUILayout.BeginHorizontal();
+            _interfaces[i] = EditorGUILayout.TextField(_interfaces[i]);
+            if (EditorGUIHelper.SmallButton("X"))
+            {
+                _interfaces.RemoveAt(i);
+            }
+            GUILayout.EndHorizontal();
+        }
+        EditorGUI.indentLevel--;
     }
 
     private void SignatureOverviewSection()
@@ -332,6 +367,34 @@ public class ScriptsGeneratorEditor : EditorWindow
         return _stringBuilder.ToString();
     }
 
+    private string GetImplementedInterfaces()
+    {
+        if (!_implementInterfaces)
+            return string.Empty;
+
+        string parentClass = GetParentClassName();
+        _stringBuilder.Clear();
+
+        string itf;
+        for (int i = 0; i < _interfaces.Count; i++)
+        {
+            itf = _interfaces[i];
+
+            if (string.IsNullOrEmpty(itf))
+                continue;
+
+            if ((i == 0 && !string.IsNullOrEmpty(parentClass)) || 
+                (i > 0 && _stringBuilder.Length > 0))
+            {
+                _stringBuilder.Append(", ");
+            }
+
+            _stringBuilder.Append(itf);
+        }
+
+        return _stringBuilder.ToString();
+    }
+
     private string GetCreateMenu()
     {
         if (_classType != ClassType.ScriptableObject)
@@ -342,11 +405,11 @@ public class ScriptsGeneratorEditor : EditorWindow
 
     private string GetClassSignature()
     {
-        return $"{GetAccessModifier()}{GetClassModifier()} {GetClassType()} {GetClassName()}{GetParentClassName()}";
+        return $"{GetAccessModifier()}{GetClassModifier()} {GetClassType()} {GetClassName()}{GetParentClassName()}{GetImplementedInterfaces()}";
     }
-#endregion
+    #endregion
 
-#region Private Methods
+    #region Private Methods
     private void Generate()
     {
         string fullPath = Path.Combine(_path, $"{_className}.cs");
