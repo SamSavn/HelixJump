@@ -62,7 +62,7 @@ namespace LKS.Helpers
 
             _newPlatform.transform.SetParent(_tower.transform, false);
             _newPlatform.transform.SetLocalPositionAndRotation(_platformPosition, Quaternion.Euler(_platformRotation));
-            _newPlatform.Initialize(index, randomizationFactor: .5f);
+            _newPlatform.Initialize(randomizationFactor: .5f);
 
             _level.Add(_newPlatform);
         }
