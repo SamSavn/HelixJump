@@ -11,6 +11,7 @@ namespace LKS.GameElements
     {
 #region Constants & Fields
         public event Action<bool> OnToggle;
+        private int _index;
 #endregion
 
 #region Serialized Fields
@@ -27,13 +28,19 @@ namespace LKS.GameElements
 #endregion
 
 #region Public Methods
-        public void Initialize(float randomizationFactor)
+        public void Initialize(int index, float randomizationFactor)
         {
+            _index = index;
+
             if (_segments == null || _segments.Length == 0)
             {
                 _segments = GetComponentsInChildren<PlatformSegment>();
             }
 
+            if (index == 0)
+            {
+                randomizationFactor = .3f;
+            }
             if (!randomizationFactor.IsInRange(0, 1f))
             {
                 randomizationFactor = .5f;
@@ -41,10 +48,20 @@ namespace LKS.GameElements
 
             for (int i = 0; i < _segments.Length; i++)
             {
-                _segments[i].Initialize(this, Random.value <= randomizationFactor);
+                _segments[i].Initialize(this, ActivateSegment(_segments[i]));
             }
 
             SetActive(GameManager.Tower.CanActivate(this));
+
+            bool ActivateSegment(PlatformSegment segment)
+            {
+                if (_index > 0)
+                    return Random.value <= randomizationFactor;
+
+                return !segment.IsInitialSegment()
+                            ? Random.value <= randomizationFactor
+                            : true;
+            }
         }
 
         public override void SetActive(bool active)

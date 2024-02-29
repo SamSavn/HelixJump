@@ -1,3 +1,4 @@
+using LKS.Managers;
 using UnityEngine;
 
 namespace LKS.GameElements
@@ -16,6 +17,16 @@ namespace LKS.GameElements
 #endregion
 
 #region Public Methods
+        public bool IsInitialSegment()
+        {
+            float angleThreshold = 0.6f;
+            Vector3 toCamera = GameManager.GameCamera.Position - Position;
+            toCamera.Normalize();
+
+            float dot = Vector3.Dot(transform.forward, toCamera);
+            return dot >= angleThreshold;
+        }
+
         public void Initialize(Platform platform, bool activeForLevel)
         {
             _platform = platform;
