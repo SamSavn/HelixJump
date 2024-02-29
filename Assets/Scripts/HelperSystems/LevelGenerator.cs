@@ -20,6 +20,9 @@ namespace LKS.Helpers
         private Vector3 _platformRotation;
 
         private Platform _newPlatform;
+
+        private float _platformHeight;
+        private float _randomRotationAngle;
 #endregion
 
 #region Constructors
@@ -51,15 +54,15 @@ namespace LKS.Helpers
             if (_newPlatform == null)
                 return;
 
-            float platformHeight = -index * _levelGenerationData.PlatformsDistance;
-            _platformPosition = new Vector3(0f, platformHeight, 0f);
+            _platformHeight = index * _levelGenerationData.PlatformsDistance;
+            _platformPosition = new Vector3(0f, -_platformHeight, 0f);
 
-            float randomRotationAngle = Random.Range(0f, 360f);
-            _platformRotation = new Vector3(0f, randomRotationAngle, 0f);
+            _randomRotationAngle = Random.Range(0f, 360f);
+            _platformRotation = new Vector3(0f, _randomRotationAngle, 0f);
 
             _newPlatform.transform.SetParent(_tower.transform, false);
             _newPlatform.transform.SetLocalPositionAndRotation(_platformPosition, Quaternion.Euler(_platformRotation));
-            _newPlatform.Initialize(randomizationFactor: .5f);
+            _newPlatform.Initialize(index, randomizationFactor: .5f);
 
             _level.Add(_newPlatform);
         }
