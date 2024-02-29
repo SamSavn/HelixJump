@@ -54,6 +54,7 @@ namespace LKS.GameElements
         public override void SetActive(bool active)
         {
             OnToggle?.Invoke(active);
+            base.SetActive(active);
         }
 #endregion
     }

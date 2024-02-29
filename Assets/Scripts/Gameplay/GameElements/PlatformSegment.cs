@@ -30,6 +30,7 @@ namespace LKS.GameElements
             _mesh.SetActive(active);
             _collider.enabled = active;
             _renderer.enabled = active;
+            base.SetActive(active);
         }
 #endregion
 
