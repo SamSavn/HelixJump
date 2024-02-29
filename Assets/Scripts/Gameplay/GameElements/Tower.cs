@@ -18,14 +18,12 @@ namespace LKS.GameElements
         private List<Platform> _platforms = new List<Platform>();
 
         private float _globalPlatformsDistance;
-        private float _position;
-        private float _height;
 #endregion
 
 #region Properties
         private float Offset => ADDITIONAL_PLATFORMS_OFFSET * _globalPlatformsDistance;
-        private float TopPosThreshold => _position + _height + Offset;
-        private float BottomPosThreshold => _position - _height - Offset; 
+        private float TopPosThreshold => Position.y + Scale.y + Offset;
+        private float BottomPosThreshold => Position.y - Scale.y - Offset; 
 #endregion
 
 #region Unity Methods
@@ -40,10 +38,7 @@ namespace LKS.GameElements
             }
 
             _levelGenerator = new LevelGenerator(_generationData);
-
             _globalPlatformsDistance = transform.TransformPoint(new Vector3(0, _generationData.PlatformsDistance, 0)).y;
-            _position = transform.position.y;
-            _height = transform.lossyScale.y;
 
             GameManager.SetTower(this);
         }
@@ -57,7 +52,7 @@ namespace LKS.GameElements
 #region Public Methods
         public bool CanActivate(Platform platform)
         {
-            return platform.Position.IsInRange(BottomPosThreshold, TopPosThreshold);
+            return platform.Position.y.IsInRange(BottomPosThreshold, TopPosThreshold);
         } 
 #endregion
     }

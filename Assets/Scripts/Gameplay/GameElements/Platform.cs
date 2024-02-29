@@ -17,10 +17,6 @@ namespace LKS.GameElements
         [SerializeField] private PlatformSegment[] _segments;
 #endregion
 
-#region Properties
-        public float Position => transform.position.y;
-        #endregion
-
 #region Unity Methods
         private void Reset()
         {

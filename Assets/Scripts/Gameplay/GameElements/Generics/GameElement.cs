@@ -5,6 +5,26 @@ namespace LKS.GameElements
     public abstract class GameElement : MonoBehaviour
     {
 #region Properties
+        public Vector3 Position
+        {
+            get => transform.position;
+            set => transform.position = value;
+        }
+
+        public Vector3 LocalPosition
+        {
+            get => transform.localPosition;
+            set => transform.localPosition = value;
+        }
+
+        public Vector3 Rotation
+        {
+            get => transform.eulerAngles;
+            set => transform.eulerAngles = value;
+        }
+
+        public Vector3 Scale => transform.lossyScale;
+        
         public int Id => gameObject.GetInstanceID();
 #endregion
 
