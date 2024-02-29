@@ -5,7 +5,7 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LKS.Gameplay
+namespace LKS.GameElements
 {
     public class Platform : GameElement
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace LKS.Gameplay
+namespace LKS.GameElements
 {
     public class PlatformSegment : GameElement
     {

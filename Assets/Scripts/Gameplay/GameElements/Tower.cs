@@ -5,7 +5,7 @@ using LKS.Managers;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LKS.Gameplay
+namespace LKS.GameElements
 {
     public class Tower : GameElement
     {

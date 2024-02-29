@@ -1,8 +1,8 @@
+using LKS.Data;
+using LKS.GameElements;
+using LKS.Managers;
 using System.Collections.Generic;
 using UnityEngine;
-using LKS.Data;
-using LKS.Gameplay;
-using LKS.Managers;
 
 namespace LKS.Helpers
 {
@@ -19,8 +19,6 @@ namespace LKS.Helpers
         private Vector3 _platformPosition;
         private Vector3 _platformRotation;
 
-        private GameObject _platformPrefab;
-        private GameObject _platformClone;
         private Platform _newPlatform;
 #endregion
 
@@ -28,7 +26,6 @@ namespace LKS.Helpers
         public LevelGenerator(LevelGenerationData levelGenerationData)
         {
             _levelGenerationData = levelGenerationData;
-            _platformPrefab = AddressablesLoader.LoadSingle<GameObject>(PLATFORM_PREFAB_ADDRESS);
         }
 #endregion
 
@@ -49,14 +46,18 @@ namespace LKS.Helpers
 #region Private Methods
         private void GeneratePlaform(int index)
         {
+            _newPlatform = PoolingManager.GetFromPool<Platform>();
+
+            if (_newPlatform == null)
+                return;
+
             float platformHeight = -index * _levelGenerationData.PlatformsDistance;
             _platformPosition = new Vector3(0f, platformHeight, 0f);
 
             float randomRotationAngle = Random.Range(0f, 360f);
             _platformRotation = new Vector3(0f, randomRotationAngle, 0f);
 
-            _platformClone = GameObject.Instantiate(_platformPrefab, _tower.transform);
-            _newPlatform = _platformClone.GetComponent<Platform>();
+            _newPlatform.transform.SetParent(_tower.transform, false);
             _newPlatform.transform.SetLocalPositionAndRotation(_platformPosition, Quaternion.Euler(_platformRotation));
             _newPlatform.Initialize(randomizationFactor: .5f);
 
