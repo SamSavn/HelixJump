@@ -15,6 +15,7 @@ namespace LKS.GameElements
 #endregion
 
 #region Serialized Fields
+        [SerializeField] private Collider _fallZone;
         [SerializeField] private PlatformSegment[] _segments;
 #endregion
 
@@ -66,6 +67,7 @@ namespace LKS.GameElements
 
         public override void SetActive(bool active)
         {
+            _fallZone.enabled = active;
             OnToggle?.Invoke(active);
             base.SetActive(active);
         }

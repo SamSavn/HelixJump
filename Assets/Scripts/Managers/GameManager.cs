@@ -31,7 +31,9 @@ namespace LKS.Managers
         {
             Tower = tower;
         }
+#endregion
 
+#region States Methods
         public static void ResetGame()
         {
             _stateMachine.Reset();

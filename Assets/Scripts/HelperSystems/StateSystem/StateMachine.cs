@@ -4,24 +4,43 @@ namespace LKS.States
 {
     public class StateMachine<TState> where TState : IState
     {
+#region Constants & Fields
         private TState _initialState;
-        public TState CurrentState { get; private set; }
+#endregion
 
-        public StateMachine(TState initialState) 
+#region Properties
+        public TState CurrentState { get; private set; }
+#endregion
+
+#region Constructors
+        public StateMachine(TState initialState)
         {
             _initialState = initialState;
             ChangeState(initialState);
         }
+#endregion
+
+#region Public Methods
+        public bool IsInState<T>() where T : TState
+        {
+            return CurrentState != null && CurrentState.GetType() == typeof(T);
+        }
 
         public void ChangeState(TState state)
         {
-            if(state == null)
+            if (state == null)
             {
                 Debug.LogWarning($"Unable to change state: new state is null");
                 return;
             }
 
-            if(CurrentState != null)
+            if (IsInState<TState>())
+            {
+                UpdateState();
+                return;
+            }
+
+            if (CurrentState != null)
             {
                 CurrentState.OnExit();
             }
@@ -41,6 +60,7 @@ namespace LKS.States
         public void Reset()
         {
             ChangeState(_initialState);
-        }
+        } 
+#endregion
     }
 }

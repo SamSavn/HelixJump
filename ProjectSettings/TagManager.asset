@@ -15,8 +15,8 @@ TagManager:
   - Platform
   - Tower
   - Ball
-  - RedPlatformSegment
-  - 
+  - Obstacle
+  - FallZone
   - 
   - 
   - 
