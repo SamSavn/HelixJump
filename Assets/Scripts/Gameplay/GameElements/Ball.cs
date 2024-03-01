@@ -1,3 +1,4 @@
+using LKS.States;
 using UnityEngine;
 
 namespace LKS.GameElements
@@ -10,20 +11,96 @@ namespace LKS.GameElements
 #endregion
 
 #region Fields
-        private Vector3 _impactNormal;
+        private StateMachine<BallState> _stateMachine;
+#endregion
+
+#region Properties
+        public Rigidbody Rigidbody => _rigidbody;
+        public Vector3 InitialPosition {  get; private set; }
+#endregion
+
+#region Unity Methods
+        private void Awake()
+        {            
+            InitialPosition = transform.position;
+            _stateMachine = new StateMachine<BallState>(new IdleState(this));
+        }
+#endregion
+
+#region Private Methods
+        private void OnSegmentHit(Collision collision)
+        {
+            if (Vector3.Dot(collision.GetContact(0).normal, Vector3.up) > 0.9f)
+            {
+                Bounce();
+            }
+        }
+
+        private void OnObstacleHit(Collision collision)
+        {
+            Die();
+        }
+#endregion
+
+#region States Methods
+        private void Bounce()
+        {
+            if (_stateMachine.IsInState<BouncingState>())
+            {
+                _stateMachine.UpdateState();
+            }
+            else
+            {
+                _stateMachine.ChangeState(new BouncingState(this, _jumpForce));
+            }
+        }
+
+        [ContextMenu("Fall")]
+        private void Fall()
+        {
+            if (_stateMachine.IsInState<FallingState>())
+            {
+                _stateMachine.UpdateState();
+            }
+            else
+            {
+                _stateMachine.ChangeState(new FallingState(this));
+            }
+        }
+
+        private void Die()
+        {
+            _stateMachine.ChangeState(new DeadState(this));
+        } 
+
+        private void ResetState()
+        {
+            _stateMachine.Reset();
+        }
 #endregion
 
 #region Collision Detection
         private void OnCollisionEnter(Collision collision)
         {
-            _impactNormal = collision.GetContact(0).normal;
-
-            if (Vector3.Dot(_impactNormal, Vector3.up) > 0.9f)
+            switch (collision.gameObject.layer)
             {
-                _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
-                _rigidbody.AddForce(new Vector3(0, _jumpForce / _rigidbody.mass, 0), ForceMode.VelocityChange);
+                case 6:
+                    OnSegmentHit(collision);
+                    break;
+
+                case 10:
+                    OnObstacleHit(collision);
+                    break;
+
+                default:
+                    break;
             }
-        } 
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            Fall();
+        }
 #endregion
     }
 }

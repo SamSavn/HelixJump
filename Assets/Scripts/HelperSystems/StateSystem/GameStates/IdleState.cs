@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace LKS.States
 {
-    public class FallingState : BallState
+    public class IdleState : BallState
     {
 #region Constructors
-        public FallingState(Ball ball) : base(ball)
+        public IdleState(Ball ball) : base(ball)
         {
         }
 #endregion
@@ -15,12 +15,16 @@ namespace LKS.States
         public override void OnEnter()
         {
             base.OnEnter();
+
+            _ball.Rigidbody.velocity = Vector3.zero;
+            _ball.Rigidbody.isKinematic = true;
+            _ball.transform.position = _ball.InitialPosition;
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            _ball.Rigidbody.velocity = Vector3.zero;
+            _ball.Rigidbody.isKinematic = false;
         }
 
         public override void UpdateState()
