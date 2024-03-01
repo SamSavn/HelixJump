@@ -4,17 +4,17 @@ namespace LKS.States
 {
     public abstract class GameState : IState
     {
-        public void OnEnter()
+        public virtual void OnEnter()
         {
             
         }
 
-        public void OnExit()
+        public virtual void OnExit()
         {
             
         }
 
-        public void UpdateState()
+        public virtual void UpdateState()
         {
             
         }

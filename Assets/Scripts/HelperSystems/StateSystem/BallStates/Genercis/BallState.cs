@@ -5,12 +5,12 @@ namespace LKS.States
 {
     public abstract class BallState : IState
     {
-        public void OnEnter()
+        public virtual void OnEnter()
         {
             
         }
 
-        public void OnExit()
+        public virtual void OnExit()
         {
             
         }
