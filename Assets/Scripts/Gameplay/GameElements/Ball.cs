@@ -1,3 +1,4 @@
+using LKS.Managers;
 using LKS.States;
 using UnityEngine;
 
@@ -82,24 +83,25 @@ namespace LKS.GameElements
 #region Collision Detection
         private void OnCollisionEnter(Collision collision)
         {
-            switch (collision.gameObject.layer)
+            if (collision == null)
+                return;
+
+            if (LayerMaskManager.IsPlatformSegment(collision.gameObject))
             {
-                case 6:
                     OnSegmentHit(collision);
-                    break;
-
-                case 10:
+            }
+            else if (LayerMaskManager.IsObstacle(collision.gameObject))
+            {
                     OnObstacleHit(collision);
-                    break;
-
-                default:
-                    break;
             }
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            Fall();
+            if (LayerMaskManager.IsFallZone(other.gameObject))
+            {
+                Fall();
+            }
         }
 #endregion
     }
