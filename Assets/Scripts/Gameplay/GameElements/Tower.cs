@@ -2,6 +2,7 @@ using LKS.Data;
 using LKS.Extentions;
 using LKS.Helpers;
 using LKS.Inputs;
+using LKS.Iterations;
 using LKS.Managers;
 using LKS.States;
 using LKS.States.TowerStates;
@@ -20,6 +21,8 @@ namespace LKS.GameElements
 
         private LevelGenerationData _generationData;
         private LevelGenerator _levelGenerator;
+        private Iterator _platformsIterator; 
+
         private List<Platform> _platforms = new List<Platform>();
 
         private Quaternion _currentRotation;
@@ -60,6 +63,7 @@ namespace LKS.GameElements
         private void Start()
         {
             _platforms = _levelGenerator?.Generate(this, 10);
+            _platformsIterator = new Iterator(_platforms);
         }
 
         private void OnDisable()
@@ -79,6 +83,14 @@ namespace LKS.GameElements
         {
             _currentRotation = Quaternion.AngleAxis(angle * Time.deltaTime, Vector3.up);
             Rotation = _currentRotation * Rotation;
+        }
+#endregion
+
+#region Private Methods
+        [ContextMenu("MoveUp")]
+        private void MoveUp()
+        {
+            _platformsIterator.Iterate();
         }
 #endregion
 

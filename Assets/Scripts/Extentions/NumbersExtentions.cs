@@ -18,7 +18,7 @@ namespace LKS.Extentions
 
         public static bool IsInRange(this int value, int min, int max, bool inclusive = true)
         {
-            return value.IsInRange(min, max, inclusive);
+            return ((float)value).IsInRange(min, max, inclusive);
         }
 
         public static bool IsInCollectionRange<T>(this int value, IEnumerable<T> collection)

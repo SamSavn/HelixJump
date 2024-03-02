@@ -1,5 +1,6 @@
 using LKS.Extentions;
 using LKS.Helpers;
+using LKS.Iterations;
 using LKS.Managers;
 using System;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace LKS.GameElements
 {
-    public class Platform : GameElement
+    public class Platform : GameElement, IIterable
     {
 #region Constants & Fields
         public event Action<bool> OnToggle;
@@ -17,6 +18,10 @@ namespace LKS.GameElements
 #region Serialized Fields
         [SerializeField] private Collider _fallZone;
         [SerializeField] private PlatformSegment[] _segments;
+#endregion
+
+#region Properties
+        public IIterable Next { get; set; }
 #endregion
 
 #region Unity Methods
@@ -70,6 +75,13 @@ namespace LKS.GameElements
             _fallZone.enabled = active;
             OnToggle?.Invoke(active);
             base.SetActive(active);
+        }
+
+        public void OnIteration()
+        {
+            Vector3 pos = Position;
+            pos.y += 10f;
+            Position = pos;
         }
 #endregion
     }

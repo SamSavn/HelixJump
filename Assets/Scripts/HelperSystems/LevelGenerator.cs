@@ -1,4 +1,5 @@
 using LKS.Data;
+using LKS.Extentions;
 using LKS.GameElements;
 using LKS.Managers;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace LKS.Helpers
 
         private float _platformHeight;
         private float _randomRotationAngle;
+        private int _totalPlatforms;
 #endregion
 
 #region Constructors
@@ -36,6 +38,7 @@ namespace LKS.Helpers
         public List<Platform> Generate(Tower tower, int levels)
         {
             _tower = tower;
+            _totalPlatforms = levels;
 
             for (int i = 0; i < levels; i++)
             {
@@ -63,6 +66,18 @@ namespace LKS.Helpers
             _newPlatform.transform.SetParent(_tower.transform, false);
             _newPlatform.transform.SetLocalPositionAndRotation(_platformPosition, Quaternion.Euler(_platformRotation));
             _newPlatform.Initialize(index, randomizationFactor: .5f);
+
+            if (index > 0)
+            {
+                if (index.IsInRange(1, _totalPlatforms - 2))
+                {
+                    _level[index - 1].Next = _newPlatform;
+                }
+                else
+                {
+                    _newPlatform.Next = null;
+                } 
+            }
 
             _level.Add(_newPlatform);
         }
