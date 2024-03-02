@@ -1,7 +1,7 @@
 using LKS.GameElements;
 using UnityEngine;
 
-namespace LKS.States
+namespace LKS.States.BallStates
 {
     public class FallingState : BallState
     {

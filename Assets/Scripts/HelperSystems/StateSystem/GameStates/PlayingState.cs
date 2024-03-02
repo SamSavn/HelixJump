@@ -1,7 +1,7 @@
 using LKS.Managers;
 using UnityEngine;
 
-namespace LKS.States
+namespace LKS.States.GameStates
 {
     public class PlayingState : GameState
     {

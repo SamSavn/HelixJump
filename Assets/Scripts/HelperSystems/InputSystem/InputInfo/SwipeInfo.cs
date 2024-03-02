@@ -7,9 +7,9 @@ namespace LKS.Inputs
     {
         public Vector2 StartPosition { get; private set; }
         public Vector2 EndPosition { get; private set; }
-        public Vector2 Direction { get; private set; }
-        public Direction DirectionX { get; private set; }
-        public Direction DirectionY { get; private set; }
+        public Vector2 DirectionVector { get; private set; }
+        public Vector2 Distance { get; private set; }
+        public (Direction x, Direction y) Direction { get; private set; }
 
         public void Reset()
         {
@@ -20,17 +20,22 @@ namespace LKS.Inputs
         {
             StartPosition = startPostion;
             EndPosition = endPosition;
-            Direction = direction;
+            DirectionVector = direction;
 
-            if (Direction != Vector2.zero)
+            Distance = new Vector2(Mathf.Abs(StartPosition.x - EndPosition.x), 
+                                   Mathf.Abs(StartPosition.y - EndPosition.y));
+
+            if (DirectionVector != Vector2.zero)
             {
-                DirectionX = Direction.x > 0 ? Utils.Direction.Right : Utils.Direction.Left;
-                DirectionY = Direction.y > 0 ? Utils.Direction.Up : Utils.Direction.Down;
+                Direction =
+                (
+                    x: DirectionVector.x > 0 ? Utils.Direction.Right : Utils.Direction.Left,
+                    y: DirectionVector.y > 0 ? Utils.Direction.Up : Utils.Direction.Down
+                );
             }
             else
             {
-                DirectionX = Utils.Direction.None;
-                DirectionY = Utils.Direction.None;
+                Direction = (x: Utils.Direction.None, y: Utils.Direction.None);
             }
         }
     }

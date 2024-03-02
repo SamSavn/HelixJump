@@ -1,9 +1,17 @@
+using LKS.GameElements;
 using UnityEngine;
 
-namespace LKS.States.GameStates
+namespace LKS.States.TowerStates
 {
-    public abstract class GameState : IState
+    public class TowerState : IState
     {
+        protected Tower _tower;
+
+        public TowerState(Tower tower)
+        {
+            _tower = tower;
+        }
+
         public virtual void OnEnter()
         {
             

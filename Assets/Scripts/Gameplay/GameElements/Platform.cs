@@ -52,7 +52,7 @@ namespace LKS.GameElements
                 _segments[i].Initialize(this, ActivateSegment(_segments[i]));
             }
 
-            SetActive(GameManager.Tower.CanActivate(this));
+            SetActive(GameManager.Tower.CanActivatePlatform(this));
 
             bool ActivateSegment(PlatformSegment segment)
             {

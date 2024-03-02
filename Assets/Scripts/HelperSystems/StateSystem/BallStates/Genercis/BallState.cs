@@ -1,6 +1,6 @@
 using LKS.GameElements;
 
-namespace LKS.States
+namespace LKS.States.BallStates
 {
     public abstract class BallState : IState
     {
