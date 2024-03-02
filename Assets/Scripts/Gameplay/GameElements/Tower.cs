@@ -22,6 +22,8 @@ namespace LKS.GameElements
         private LevelGenerator _levelGenerator;
         private List<Platform> _platforms = new List<Platform>();
 
+        private Quaternion _currentRotation;
+
         private float _globalPlatformsDistance;
 #endregion
 
@@ -53,7 +55,6 @@ namespace LKS.GameElements
         {
             InputManager.OnSwipe += OnSwipe;
             InputManager.OnInputUp += OnInputUp;
-            InputManager.OnInputHeld += OnInputUp;
         }
 
         private void Start()
@@ -65,7 +66,6 @@ namespace LKS.GameElements
         {
             InputManager.OnSwipe -= OnSwipe;
             InputManager.OnInputUp -= OnInputUp;
-            InputManager.OnInputHeld -= OnInputUp;
         }
 #endregion
 
@@ -77,7 +77,8 @@ namespace LKS.GameElements
 
         public void Rotate(float angle)
         {
-            Rotation = new Vector3(0, angle, 0);
+            _currentRotation = Quaternion.AngleAxis(angle * Time.deltaTime, Vector3.up);
+            Rotation = _currentRotation * Rotation;
         }
 #endregion
 

@@ -17,10 +17,16 @@ namespace LKS.GameElements
             set => transform.localPosition = value;
         }
 
-        public Vector3 Rotation
+        public Vector3 EulerAngles
         {
             get => transform.eulerAngles;
             set => transform.eulerAngles = value;
+        }
+
+        public Quaternion Rotation
+        {
+            get => transform.rotation;
+            set => transform.rotation = value;
         }
 
         public Vector3 Scale => transform.lossyScale;

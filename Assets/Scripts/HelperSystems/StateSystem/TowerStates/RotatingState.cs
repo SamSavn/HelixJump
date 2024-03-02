@@ -25,7 +25,7 @@ namespace LKS.States.TowerStates
         public override void OnEnter()
         {
             base.OnEnter();
-            _initialRotation = _tower.Rotation.y;
+            _initialRotation = _tower.EulerAngles.y;
         }
 
         public override void UpdateState()
@@ -41,11 +41,11 @@ namespace LKS.States.TowerStates
 
             if (info.Direction.x == Direction.Left)
             {
-                _rotationAngle = _initialRotation - _targetRotation;
+                _rotationAngle = /*_initialRotation + */_targetRotation;
             }
             else if (info.Direction.x == Direction.Right)
             {
-                _rotationAngle = _initialRotation + _targetRotation;
+                _rotationAngle = /*_initialRotation*/ - _targetRotation;
             }
         } 
 #endregion
