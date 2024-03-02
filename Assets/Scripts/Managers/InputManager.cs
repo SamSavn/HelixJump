@@ -1,5 +1,7 @@
+using LKS.Data;
 using LKS.Extentions;
 using LKS.GameElements;
+using LKS.Helpers;
 using LKS.Inputs;
 using System;
 using System.Collections;
@@ -9,24 +11,26 @@ namespace LKS.Managers
 {
     public static partial class InputManager
     {
-#region Constants & Fields
-        private const float MOVE_THRESHOLD = .1f;
+        #region Constants & Fields
+        private const string DATA_ADDRESS = "InputData";
 
         public static event Action<InputInfo> OnInputDown;
         public static event Action<InputInfo> OnInputUp;
         public static event Action<InputInfo> OnInputHeld;
         public static event Action<SwipeInfo> OnSwipe;
 
-        private static Vector2 _currentPosition;
+        private static Vector2? _lastMovePosition;
         private static Vector2? _startPosition;
+        private static Vector2 _currentPosition;
         private static Vector2 _moveDirection;
-        private static Vector2 _lastMovePosition;
 
         private static InputInfo _inputHoldInfo;
         private static SwipeInfo _swipeInfo;
 
-        private static Coroutine _updateMoveCoroutine;
+        private static InputData _data;
         private static InputController _controller;
+        private static Coroutine _updateMovePosCoroutine;
+        private static WaitForSeconds _updateMovePosWait;
 
         private static float _pressTime;
 #endregion
@@ -34,27 +38,24 @@ namespace LKS.Managers
 #region Constructors
         static InputManager()
         {
-            _swipeInfo = new SwipeInfo();
-            _inputHoldInfo = new InputInfo();
+            Reset();
 
+            _data = AddressablesLoader.LoadSingle<InputData>(DATA_ADDRESS);
+            _updateMovePosWait = new WaitForSeconds(_data.LastMovePositionUpdateTimeout);
             _controller = new InputController(UpdateInputs);
-            _pressTime = 0;
         }
 #endregion
 
 #region Public Methods
         public static void Start()
         {
-            Debug.Log("Start");
             _controller.Start();
         }
 
         public static void Stop()
         {
             _controller.Stop();
-
-            _swipeInfo.Reset();
-            _inputHoldInfo = new InputInfo();
+            Reset();
         }
 #endregion
 
@@ -88,28 +89,28 @@ namespace LKS.Managers
 
         private static bool IsMoving()
         {
-            if (!GetInputHold())
+            if (!_lastMovePosition.HasValue || !GetInputHold())
                 return false;
 
-            Vector2 direction = GetInputPosition() - _lastMovePosition;
+            Vector2 direction = GetInputPosition() - _lastMovePosition.Value;
             UpdateLastMovePosition();
 
-            return (direction.x > MOVE_THRESHOLD || direction.x < -MOVE_THRESHOLD) ||
-                   (direction.y > MOVE_THRESHOLD || direction.y < -MOVE_THRESHOLD);
+            return (direction.x > _data.MoveThreshold || direction.x < -_data.MoveThreshold) ||
+                   (direction.y > _data.MoveThreshold || direction.y < -_data.MoveThreshold);
         }
 
         private static void UpdateLastMovePosition()
         {
-            if (_updateMoveCoroutine == null)
+            if (_updateMovePosCoroutine == null)
             {
                 GameUpdateManager.StartCoroutine(UpdateMovePositionCo());
             }
 
             IEnumerator UpdateMovePositionCo()
             {
-                yield return null;
+                yield return _updateMovePosWait;
                 _lastMovePosition = _currentPosition;
-                _updateMoveCoroutine = null;
+                _updateMovePosCoroutine = null;
             }
         }
 
@@ -145,9 +146,7 @@ namespace LKS.Managers
 
             if (GetInputUp())
             {                
-                _startPosition = null;
-                _swipeInfo.Reset();
-
+                Reset();
                 OnInputUp?.Invoke(new InputInfo(GetInputPosition()));
             }
 
@@ -155,22 +154,40 @@ namespace LKS.Managers
             {
                 _currentPosition = GetInputPosition();
                 _pressTime += Time.deltaTime;
-                _inputHoldInfo.Update(_currentPosition, _pressTime);
+
+                if (!_lastMovePosition.HasValue)
+                {
+                    _lastMovePosition = _currentPosition; 
+                }
 
                 if (IsMoving())
                 {
-                    Debug.Log("SWIPE");
-
+                    _pressTime = 0;
                     _swipeInfo.Update(_startPosition.Value, GetInputPosition(), GetMoveDirection());
+
                     OnSwipe?.Invoke(_swipeInfo);
                 }
-                else
+                else if (_pressTime >= _data.HoldTimeThreshold)
                 {
-                    Debug.Log("HOOOOOOLD");
+                    _inputHoldInfo.Update(_currentPosition, _pressTime);
                     OnInputHeld?.Invoke(_inputHoldInfo);
                 }
             }
+            else
+            {
+                Reset();
+            }
         } 
+
+        private static void Reset()
+        {
+            _swipeInfo.Reset();
+            _inputHoldInfo = new InputInfo();
+
+            _pressTime = 0;
+            _lastMovePosition = null;
+            _startPosition = null;
+        }
 #endregion
     }
 }
