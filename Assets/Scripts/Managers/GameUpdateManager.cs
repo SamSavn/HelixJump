@@ -1,6 +1,6 @@
 using LKS.GameUpdate;
 using LKS.Helpers;
-using System;
+using System.Collections;
 using UnityEngine;
 
 namespace LKS.Managers
@@ -44,6 +44,16 @@ namespace LKS.Managers
         public static void RemoveUpdatable(IUpdatable updatable)
         {
             Controller.RemoveUpdatable(updatable);
+        }
+
+        public static Coroutine StartCoroutine(IEnumerator routine)
+        {
+            return Controller.StartCoroutine(routine);
+        }
+
+        public static void StopCoroutine(IEnumerator routine)
+        {
+            Controller.StopCoroutine(routine);
         }
         #endregion
 

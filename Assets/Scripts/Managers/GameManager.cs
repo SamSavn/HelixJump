@@ -17,7 +17,7 @@ namespace LKS.Managers
 #region Constructors
         static GameManager()
         {
-            _stateMachine = new StateMachine<GameState>(new MainMenuState());
+            _stateMachine = new StateMachine<GameState>(new PlayingState());
         }
 #endregion
 

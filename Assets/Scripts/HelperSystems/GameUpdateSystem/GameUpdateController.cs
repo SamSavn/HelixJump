@@ -9,6 +9,7 @@ namespace LKS.GameUpdate
     public class GameUpdateController : MonoBehaviour, IDisposable
     {
         private HashSet<IUpdatable> _updatablesHash = new ();        
+        private int _updatableCount = 0;
         private bool _canUpdate;
 
         private void Awake()
@@ -33,6 +34,7 @@ namespace LKS.GameUpdate
 
         private void OnDestroy()
         {
+            _canUpdate = false;
             Dispose();
         }
 
@@ -41,7 +43,10 @@ namespace LKS.GameUpdate
             if (!_updatablesHash.Contains(updatable))
             {
                 _updatablesHash.Add(updatable);
+                _updatableCount++;
             }
+
+            _canUpdate = _updatableCount > 0;
         }
 
         public void RemoveUpdatable(IUpdatable updatable)
@@ -49,7 +54,10 @@ namespace LKS.GameUpdate
             if (_updatablesHash.Contains(updatable))
             {
                 _updatablesHash.Remove(updatable);
+                _updatableCount--;
             }
+
+            _canUpdate = _updatableCount > 0;
         }
 
         public void Dispose()
