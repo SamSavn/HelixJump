@@ -9,6 +9,7 @@ namespace LKS.Managers
         {
 #region Constants & Fields
             public Action OnUpdate;
+            private bool _running;
 #endregion
 
 #region Constructors
@@ -26,16 +27,25 @@ namespace LKS.Managers
 
             public void Start()
             {
+                if (_running)
+                    return;
+
+                _running = true;
                 GameUpdateManager.AddUpdatable(this);
             }
 
             public void Stop()
             {
+                if (!_running)
+                    return;
+
+                _running = false;
                 GameUpdateManager.RemoveUpdatable(this);
             }
 
             public void Dispose()
             {
+                Stop();
                 OnUpdate = null;
             } 
 #endregion
