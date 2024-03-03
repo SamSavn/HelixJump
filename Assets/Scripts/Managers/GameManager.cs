@@ -1,6 +1,8 @@
 using LKS.GameElements;
 using LKS.States;
+using LKS.States.BallStates;
 using LKS.States.GameStates;
+using LKS.States.TowerStates;
 
 namespace LKS.Managers
 {
@@ -13,24 +15,51 @@ namespace LKS.Managers
 #region Properties
         public static GameCamera GameCamera { get; private set; }
         public static Tower Tower { get; private set; }
+        public static Ball Ball { get; private set; }
 #endregion
 
 #region Constructors
         static GameManager()
         {
-            _stateMachine = new StateMachine<GameState>(new PlayingState());
+            _stateMachine = new StateMachine<GameState>(new MainMenuState());
         }
 #endregion
 
 #region Public Methods
         public static void SetGameCamera(GameCamera gameCamera)
         {
-            GameCamera = gameCamera;
+            GameCamera ??= gameCamera;
         }
 
         public static void SetTower(Tower tower)
         {
-            Tower = tower;
+            Tower ??= tower;
+        }
+
+        public static void SetBall(Ball ball)
+        {
+            Ball ??= ball;
+        }
+
+        public static bool CanActivatePlatform(Platform platform)
+        {
+            return Tower.CanActivatePlatform(platform);
+        }
+
+        public static void OnBallStateChanged<TState>(TState state) where TState : BallState
+        {
+            if(state == null) 
+                return;
+
+            if(state.GetType() == typeof(FallingState))
+            {
+                Tower.Slide();
+            }
+        }
+
+        public static void OnTowerStateChanged<TState>(TState state) where TState : TowerState
+        {
+
         }
 #endregion
 

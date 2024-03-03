@@ -1,3 +1,4 @@
+using LKS.Managers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,9 @@ namespace LKS.GameUpdate
 {
     public class GameUpdateController : MonoBehaviour, IDisposable
     {
-        private HashSet<IUpdatable> _updatablesHash = new ();        
+        private List<IUpdatable> _updatables = new ();
+        private IUpdatable _updatable;
+
         private int _updatableCount = 0;
         private bool _canUpdate;
 
@@ -23,12 +26,14 @@ namespace LKS.GameUpdate
             if (!_canUpdate)
                 return;
 
-            foreach (IUpdatable updatable in _updatablesHash)
+            for (int i = 0; i < _updatableCount; i++)
             {
-                if (updatable == null)
+                _updatable = _updatables[i];
+
+                if (_updatable == null)
                     continue;
 
-                updatable.Update();
+                _updatable.CustomUpdate();
             }
         }
 
@@ -40,9 +45,9 @@ namespace LKS.GameUpdate
 
         public void AddUpdatable(IUpdatable updatable)
         {
-            if (!_updatablesHash.Contains(updatable))
+            if (!_updatables.Contains(updatable))
             {
-                _updatablesHash.Add(updatable);
+                _updatables.Add(updatable);
                 _updatableCount++;
             }
 
@@ -51,9 +56,10 @@ namespace LKS.GameUpdate
 
         public void RemoveUpdatable(IUpdatable updatable)
         {
-            if (_updatablesHash.Contains(updatable))
+            if (_updatables.Contains(updatable))
             {
-                _updatablesHash.Remove(updatable);
+                _canUpdate = false;
+                _updatables.Remove(updatable);
                 _updatableCount--;
             }
 
@@ -62,7 +68,7 @@ namespace LKS.GameUpdate
 
         public void Dispose()
         {
-            _updatablesHash.Clear();
+            _updatables.Clear();
             _canUpdate = false;
         }
     }

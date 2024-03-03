@@ -6,23 +6,43 @@ namespace LKS.Iterations
     public class Iterator : IDisposable
     {
         private List<IIterable> _iterables;
-        private IIterable _current;
+        
+        private IIterable First
+        {
+            get
+            {
+                if (_iterables != null && _iterables.Count > 0)
+                {
+                    return _iterables[0];
+                }
+
+                return null;
+            }
+        }
 
         public Iterator(IEnumerable<IIterable> iterables)
         {
             _iterables = new List<IIterable>(iterables);
-
-            if (_iterables.Count > 0)
-            {
-                _current = _iterables[0]; 
-            }
         }
 
         public void Iterate()
         {
-            if (_current != null)
+            if (First != null)
             {
-                _current.Iterate(); 
+                First.Iterate();
+            }
+        }
+
+        public void Add(IIterable item)
+        {
+            _iterables.Add(item);
+        }
+
+        public void Remove(IIterable item)
+        {
+            if (_iterables.Contains(item))
+            {
+                _iterables.Remove(item);
             }
         }
 

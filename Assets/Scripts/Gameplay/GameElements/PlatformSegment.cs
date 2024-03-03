@@ -1,9 +1,10 @@
 using LKS.Managers;
+using System;
 using UnityEngine;
 
 namespace LKS.GameElements
 {
-    public class PlatformSegment : GameElement
+    public class PlatformSegment : GameElement, IDisposable
     {
 #region Constants & Fields
         private Platform _platform;
@@ -17,9 +18,8 @@ namespace LKS.GameElements
 #endregion
 
 #region Public Methods
-        public bool IsInitialSegment()
+        public bool IsInitialSegment(float angleThreshold)
         {
-            float angleThreshold = 0.6f;
             Vector3 toCamera = GameManager.GameCamera.Position - Position;
             toCamera.Normalize();
 
@@ -30,9 +30,14 @@ namespace LKS.GameElements
         public void Initialize(Platform platform, bool activeForLevel)
         {
             _platform = platform;
-            _platform.OnToggle += OnPlatformToggle;
-
             _activeForLevel = activeForLevel;
+
+            if (_activeForLevel)
+            {
+                _platform.OnToggle += OnPlatformToggle;
+                _platform.OnEnable += OnPlatformEnabled;
+            }
+
             SetActive(_activeForLevel);
         }
 
@@ -43,6 +48,15 @@ namespace LKS.GameElements
             _renderer.enabled = active;
             base.SetActive(active);
         }
+
+        public void Dispose()
+        {
+            if (_activeForLevel)
+            {
+                _platform.OnToggle -= OnPlatformToggle;
+                _platform.OnEnable -= OnPlatformEnabled;
+            }
+        }
 #endregion
 
 #region Event Handlers
@@ -52,6 +66,12 @@ namespace LKS.GameElements
                 return;
 
             SetActive(value);
+        }
+
+        private void OnPlatformEnabled(bool enabled)
+        {
+            _collider.enabled = enabled;
+            Dispose();
         }
 #endregion
     }

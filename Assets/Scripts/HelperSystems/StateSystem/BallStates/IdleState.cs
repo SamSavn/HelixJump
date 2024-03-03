@@ -15,16 +15,12 @@ namespace LKS.States.BallStates
         public override void OnEnter()
         {
             base.OnEnter();
-
-            _ball.Rigidbody.velocity = Vector3.zero;
-            _ball.Rigidbody.isKinematic = true;
-            _ball.transform.position = _ball.InitialPosition;
+            _ball.Rigidbody.isKinematic = false;
         }
 
         public override void OnExit()
         {
-            base.OnExit();
-            _ball.Rigidbody.isKinematic = false;
+            base.OnExit();            
         }
 
         public override void UpdateState()

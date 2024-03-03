@@ -1,5 +1,6 @@
 using LKS.Data;
 using LKS.Extentions;
+using LKS.GameUpdate;
 using LKS.Helpers;
 using LKS.Inputs;
 using LKS.Iterations;
@@ -8,14 +9,14 @@ using LKS.States;
 using LKS.States.TowerStates;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace LKS.GameElements
 {
-    public class Tower : GameElement
+    public class Tower : GameElement, IUpdatable
     {
 #region Fields
         private const string GENERATION_DATA_ADDRESS = "LevelGenerationData";
-        private const int ADDITIONAL_PLATFORMS_OFFSET = 3;
 
         private StateMachine<TowerState> _stateMachine;
 
@@ -28,10 +29,12 @@ namespace LKS.GameElements
         private Quaternion _currentRotation;
 
         private float _globalPlatformsDistance;
+        private int _additionalPlatformsOffset;
+        private int _maxPlatforms;
 #endregion
 
 #region Properties
-        private float Offset => ADDITIONAL_PLATFORMS_OFFSET * _globalPlatformsDistance;
+        private float Offset => _additionalPlatformsOffset * _globalPlatformsDistance;
         private float TopPosThreshold => Position.y + Scale.y + Offset;
         private float BottomPosThreshold => Position.y - Scale.y - Offset; 
 #endregion
@@ -49,7 +52,9 @@ namespace LKS.GameElements
             }
 
             _levelGenerator = new LevelGenerator(_generationData);
-            _globalPlatformsDistance = transform.TransformPoint(new Vector3(0, _generationData.PlatformsDistance, 0)).y;            
+            _additionalPlatformsOffset = _generationData.AdditionalPlatformsOffset;
+            _globalPlatformsDistance = _generationData.PlatformsDistance.LocalToGlobal(Axis.Y, transform);
+            _maxPlatforms = Mathf.RoundToInt((TopPosThreshold - BottomPosThreshold) / _globalPlatformsDistance);
 
             GameManager.SetTower(this);
         }
@@ -58,11 +63,13 @@ namespace LKS.GameElements
         {
             InputManager.OnSwipe += OnSwipe;
             InputManager.OnInputUp += OnInputUp;
+
+            GameUpdateManager.AddUpdatable(this);
         }
 
         private void Start()
         {
-            _platforms = _levelGenerator?.Generate(this, 10);
+            _platforms = _levelGenerator?.Generate(this, _maxPlatforms);
             _platformsIterator = new Iterator(_platforms);
         }
 
@@ -70,6 +77,8 @@ namespace LKS.GameElements
         {
             InputManager.OnSwipe -= OnSwipe;
             InputManager.OnInputUp -= OnInputUp;
+
+            GameUpdateManager.RemoveUpdatable(this);
         }
 #endregion
 
@@ -84,13 +93,16 @@ namespace LKS.GameElements
             _currentRotation = Quaternion.AngleAxis(angle * Time.deltaTime, Vector3.up);
             Rotation = _currentRotation * Rotation;
         }
-#endregion
 
-#region Private Methods
-        [ContextMenu("MoveUp")]
-        private void MoveUp()
+        [ContextMenu("Slide")]
+        public void Slide()
         {
-            _platformsIterator.Iterate();
+            _stateMachine.ChangeState(new SlidingState(this, _platformsIterator));
+        }
+
+        public void Idle()
+        {
+            _stateMachine.ChangeState(new IdleState(this));
         }
 #endregion
 
@@ -115,6 +127,14 @@ namespace LKS.GameElements
                 _stateMachine.ChangeState(new IdleState(this)); 
             }
         }
-#endregion
+
+        public void CustomUpdate()
+        {
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                GameManager.StartGame();
+            }
+        }
+        #endregion
     }
 }

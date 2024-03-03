@@ -10,8 +10,6 @@ namespace LKS.Helpers
     public class LevelGenerator
     {
 #region Constants & Fields
-        private const string PLATFORM_PREFAB_ADDRESS = "Platform";        
-
         private LevelGenerationData _levelGenerationData;
         private Tower _tower;
 
@@ -65,18 +63,23 @@ namespace LKS.Helpers
 
             _newPlatform.transform.SetParent(_tower.transform, false);
             _newPlatform.transform.SetLocalPositionAndRotation(_platformPosition, Quaternion.Euler(_platformRotation));
-            _newPlatform.Initialize(index, randomizationFactor: .5f);
+            _newPlatform.Initialize(index, _tower, _levelGenerationData);
 
             if (index > 0)
             {
                 if (index.IsInRange(1, _totalPlatforms - 2))
                 {
+                    _newPlatform.Previous = _level[index - 1];
                     _level[index - 1].Next = _newPlatform;
                 }
                 else
                 {
                     _newPlatform.Next = null;
-                } 
+                }
+            }
+            else
+            {
+                _newPlatform.Previous = null;
             }
 
             _level.Add(_newPlatform);

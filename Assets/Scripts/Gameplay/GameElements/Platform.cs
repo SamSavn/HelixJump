@@ -1,9 +1,10 @@
+using LKS.Data;
 using LKS.Extentions;
-using LKS.Helpers;
 using LKS.Iterations;
 using LKS.Managers;
 using System;
 using UnityEngine;
+using UnityEngine.Animations;
 using Random = UnityEngine.Random;
 
 namespace LKS.GameElements
@@ -12,6 +13,11 @@ namespace LKS.GameElements
     {
 #region Constants & Fields
         public event Action<bool> OnToggle;
+        public event Action<bool> OnEnable;
+
+        private Tower _tower;
+
+        private float _slidingDistance;
         private int _index;
 #endregion
 
@@ -21,6 +27,7 @@ namespace LKS.GameElements
 #endregion
 
 #region Properties
+        public IIterable Previous { get; set; }
         public IIterable Next { get; set; }
 #endregion
 
@@ -34,22 +41,22 @@ namespace LKS.GameElements
 #endregion
 
 #region Public Methods
-        public void Initialize(int index, float randomizationFactor)
+        public void Initialize(int index, Tower tower, LevelGenerationData levelGenerationData)
         {
+            _tower = tower;
             _index = index;
+            _slidingDistance = levelGenerationData.PlatformsDistance;
 
             if (_segments == null || _segments.Length == 0)
             {
                 _segments = GetComponentsInChildren<PlatformSegment>();
             }
 
+            float randomizationFactor = GetRandomizationFactor(levelGenerationData);
+
             if (index == 0)
             {
-                randomizationFactor = .3f;
-            }
-            if (!randomizationFactor.IsInRange(0, 1f))
-            {
-                randomizationFactor = .5f;
+                randomizationFactor = levelGenerationData.PlatformsMinRandomization;
             }
 
             for (int i = 0; i < _segments.Length; i++)
@@ -57,14 +64,14 @@ namespace LKS.GameElements
                 _segments[i].Initialize(this, ActivateSegment(_segments[i]));
             }
 
-            SetActive(GameManager.Tower.CanActivatePlatform(this));
+            SetActive(GameManager.CanActivatePlatform(this));
 
             bool ActivateSegment(PlatformSegment segment)
             {
                 if (_index > 0)
                     return Random.value <= randomizationFactor;
 
-                return !segment.IsInitialSegment()
+                return !segment.IsInitialSegment(levelGenerationData.InitialSegmentAngleThreshold)
                             ? Random.value <= randomizationFactor
                             : true;
             }
@@ -77,12 +84,28 @@ namespace LKS.GameElements
             base.SetActive(active);
         }
 
+        public void SetEnabled(bool enabled)
+        {
+            _fallZone.enabled = enabled;
+            OnEnable?.Invoke(enabled);
+        }
+
         public void OnIteration()
         {
-            Vector3 pos = Position;
-            pos.y += 10f;
-            Position = pos;
+            Vector3 pos = LocalPosition;
+            pos.y += _slidingDistance;
+            LocalPosition = pos;
+
+            SetActive(_tower.CanActivatePlatform(this));
+            SetEnabled(LocalPosition.y <= 0);
         }
+#endregion
+
+#region Private Methods
+        private float GetRandomizationFactor(LevelGenerationData levelGenerationData)
+        {
+            return Random.Range(levelGenerationData.PlatformsMinRandomization, levelGenerationData.PlatformsMaxRandomizationFactor);
+        } 
 #endregion
     }
 }

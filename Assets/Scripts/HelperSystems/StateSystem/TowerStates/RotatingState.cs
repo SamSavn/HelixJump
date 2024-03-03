@@ -41,11 +41,11 @@ namespace LKS.States.TowerStates
 
             if (info.Direction.x == Direction.Left)
             {
-                _rotationAngle = /*_initialRotation + */_targetRotation;
+                _rotationAngle = _targetRotation;
             }
             else if (info.Direction.x == Direction.Right)
             {
-                _rotationAngle = /*_initialRotation*/ - _targetRotation;
+                _rotationAngle = -_targetRotation;
             }
         } 
 #endregion

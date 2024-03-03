@@ -9,6 +9,7 @@ namespace LKS.States.GameStates
         {
             base.OnEnter();
             InputManager.Start();
+            GameManager.Ball.StartGame();
         }
 
         public override void OnExit()
