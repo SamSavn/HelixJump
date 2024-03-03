@@ -2,6 +2,8 @@ using LKS.Data;
 using LKS.Extentions;
 using LKS.Iterations;
 using LKS.Managers;
+using LKS.States;
+using LKS.States.PlatformStates;
 using System;
 using UnityEngine;
 using UnityEngine.Animations;
@@ -15,6 +17,7 @@ namespace LKS.GameElements
         public event Action<bool> OnToggle;
         public event Action<bool> OnEnable;
 
+        private StateMachine<PlatformState> _stateMachine;
         private Tower _tower;
 
         private float _slidingDistance;
@@ -64,7 +67,7 @@ namespace LKS.GameElements
                 _segments[i].Initialize(this, ActivateSegment(_segments[i]));
             }
 
-            SetActive(GameManager.CanActivatePlatform(this));
+            _stateMachine = new StateMachine<PlatformState>(new IdleState(this));
 
             bool ActivateSegment(PlatformSegment segment)
             {
@@ -92,12 +95,7 @@ namespace LKS.GameElements
 
         public void OnIteration()
         {
-            Vector3 pos = LocalPosition;
-            pos.y += _slidingDistance;
-            LocalPosition = pos;
-
-            SetActive(_tower.CanActivatePlatform(this));
-            SetEnabled(LocalPosition.y <= 0);
+            _stateMachine.ChangeState(new SlidingState(this, _slidingDistance, OnSlideCompleted));            
         }
 #endregion
 
@@ -106,6 +104,11 @@ namespace LKS.GameElements
         {
             return Random.Range(levelGenerationData.PlatformsMinRandomization, levelGenerationData.PlatformsMaxRandomizationFactor);
         } 
+
+        private void OnSlideCompleted()
+        {
+            _stateMachine.ChangeState(new IdleState(this));
+        }
 #endregion
     }
 }

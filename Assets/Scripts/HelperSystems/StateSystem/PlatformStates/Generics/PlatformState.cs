@@ -1,15 +1,20 @@
 using LKS.GameElements;
 using UnityEngine;
 
-namespace LKS.States.TowerStates
+namespace LKS.States.PlatformStates
 {
-    public class TowerState : IState
+    public abstract class PlatformState : IState
     {
-        protected Tower _tower;
+        protected Platform _platform;
 
-        public TowerState(Tower tower)
+        public PlatformState(Platform platform)
         {
-            _tower = tower;
+            _platform = platform;
+        }
+
+        public void CustomUpdate()
+        {
+            UpdateState();
         }
 
         public virtual void OnEnter()
@@ -25,11 +30,6 @@ namespace LKS.States.TowerStates
         public virtual void UpdateState()
         {
             
-        }
-
-        public void CustomUpdate()
-        {
-            UpdateState();
         }
     }
 }
