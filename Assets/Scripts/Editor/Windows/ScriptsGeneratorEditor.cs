@@ -70,7 +70,7 @@ public class ScriptsGeneratorEditor : EditorWindow
 
 #region Public Methods
 
-    [MenuItem("Window/Script Generator")]
+    [MenuItem("Lucky Kat/Script Generator")]
     public static void ShowWindow()
     {
         GetWindow<ScriptsGeneratorEditor>("Script Generator").Show();

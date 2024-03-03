@@ -1,21 +1,19 @@
 using LKS.GameElements;
 using UnityEngine;
 
-namespace LKS.States
+namespace LKS.States.BallStates
 {
-    public class IdleState : BallState
+    public class WaitingState : BallState
     {
-#region Constructors
-        public IdleState(Ball ball) : base(ball)
+        public WaitingState(Ball ball) : base(ball)
         {
         }
-#endregion
 
-#region Public Methods
         public override void OnEnter()
         {
             base.OnEnter();
 
+            _ball.SetActive(false);
             _ball.Rigidbody.velocity = Vector3.zero;
             _ball.Rigidbody.isKinematic = true;
             _ball.transform.position = _ball.InitialPosition;
@@ -25,12 +23,12 @@ namespace LKS.States
         {
             base.OnExit();
             _ball.Rigidbody.isKinematic = false;
+            _ball.SetActive(true);
         }
 
         public override void UpdateState()
         {
-
-        } 
-#endregion
+            
+        }
     }
 }

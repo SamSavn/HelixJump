@@ -45,6 +45,14 @@ namespace LKS.Managers
 
             return null;
         }
+
+        public static void AddToPool(GameElement gameElement)
+        {
+            gameElement.SetActive(false);
+            gameElement.Dispose();
+            _poolParent.Add(gameElement);
+            _gameElementsPool.AddToPool(gameElement);
+        }
 #endregion
 
 #region Private Methods
@@ -55,12 +63,6 @@ namespace LKS.Managers
                 AddToPool(_gameElementFactory.CreatePlatform());
             }
         }
-
-        private static void AddToPool(GameElement gameElement)
-        {
-            _poolParent.Add(gameElement);
-            _gameElementsPool.AddToPool(gameElement);
-        } 
 #endregion
     }
 }

@@ -12,5 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa2d46de5fa078b44bbbead4a6ad3e2d, type: 3}
   m_Name: LevelGenerationData
   m_EditorClassIdentifier: 
-  _platformPrefab: {fileID: 7721314282282293326, guid: da4adfa6dcc7c524bbd5c3882e542954, type: 3}
   _platformsDistance: 0.25
+  _initialSegmentAngleThreshold: 0.6
+  _platformsMinRandomization: 0.3
+  _platformsMaxRandomization: 0.7
+  _obstaclesMinRandomization: 0
+  _obstaclesMaxRandomization: 0.3

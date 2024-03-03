@@ -35,7 +35,23 @@ MonoBehaviour:
   - m_GUID: cd8082b205818b44bb7b2df36bc3aae1
     m_Address: GameElementsPoolData
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - Data
+  - m_GUID: a5489a6a2c0f44446b64e096b3356e38
+    m_Address: LayerMaskData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Data
+  - m_GUID: d6fed01ed15c8da4db4f1717fb56ff9a
+    m_Address: GameUpdateController
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Utils
+  - m_GUID: eada7fbffc5772c418c46d6a35f610fe
+    m_Address: InputData
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Data
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7e70cd30ecbfa3d468d4c25cd27eb898, type: 2}
   m_SchemaSet:

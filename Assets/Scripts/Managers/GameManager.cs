@@ -1,5 +1,9 @@
 using LKS.GameElements;
 using LKS.States;
+using LKS.States.BallStates;
+using LKS.States.GameStates;
+using LKS.States.TowerStates;
+using UnityEngine;
 
 namespace LKS.Managers
 {
@@ -12,6 +16,8 @@ namespace LKS.Managers
 #region Properties
         public static GameCamera GameCamera { get; private set; }
         public static Tower Tower { get; private set; }
+        public static Ball Ball { get; private set; }
+        public static float SlidingSpeed => 2f;
 #endregion
 
 #region Constructors
@@ -24,12 +30,38 @@ namespace LKS.Managers
 #region Public Methods
         public static void SetGameCamera(GameCamera gameCamera)
         {
-            GameCamera = gameCamera;
+            GameCamera ??= gameCamera;
         }
 
         public static void SetTower(Tower tower)
         {
-            Tower = tower;
+            Tower ??= tower;
+        }
+
+        public static void SetBall(Ball ball)
+        {
+            Ball ??= ball;
+        }
+
+        public static bool CanActivatePlatform(Platform platform)
+        {
+            return Tower.CanActivatePlatform(platform);
+        }
+
+        public static void OnBallStateChanged<TState>(TState state) where TState : BallState
+        {
+            if(state == null) 
+                return;
+
+            if(state.GetType() == typeof(FallingState))
+            {
+                Tower.Slide();
+            }
+        }
+
+        public static void OnTowerStateChanged<TState>(TState state) where TState : TowerState
+        {
+
         }
 #endregion
 

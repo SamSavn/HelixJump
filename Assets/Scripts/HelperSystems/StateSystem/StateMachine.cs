@@ -21,6 +21,16 @@ namespace LKS.States
 #endregion
 
 #region Public Methods
+        public T GetCurrentState<T>() where T : TState
+        {
+            if (CurrentState is T result)
+            {
+                return result;
+            }
+
+            return default(T);
+        }
+
         public bool IsInState<T>() where T : TState
         {
             return CurrentState != null && CurrentState.GetType() == typeof(T);
