@@ -15,7 +15,7 @@ namespace LKS.States.BallStates
         public override void OnEnter()
         {
             base.OnEnter();
-            _ball.Rigidbody.isKinematic = false;
+            _ball.Rigidbody.WakeUp();
         }
 
         public override void OnExit()

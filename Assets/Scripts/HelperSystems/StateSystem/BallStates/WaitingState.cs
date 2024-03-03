@@ -14,15 +14,14 @@ namespace LKS.States.BallStates
             base.OnEnter();
 
             _ball.SetActive(false);
-            _ball.Rigidbody.velocity = Vector3.zero;
-            _ball.Rigidbody.isKinematic = true;
+            _ball.Rigidbody.Sleep();
             _ball.transform.position = _ball.InitialPosition;
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            _ball.Rigidbody.isKinematic = false;
+            _ball.Rigidbody.WakeUp();
             _ball.SetActive(true);
         }
 

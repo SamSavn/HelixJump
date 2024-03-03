@@ -59,6 +59,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Segment
       objectReference: {fileID: 0}
+    - target: {fileID: 1516073329782179471, guid: ef9e685bd1f52d34ab9ba350d8c539fe, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2180300795875695669, guid: ef9e685bd1f52d34ab9ba350d8c539fe, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -135,6 +139,10 @@ PrefabInstance:
     - target: {fileID: 1516073329782179471, guid: ef9e685bd1f52d34ab9ba350d8c539fe, type: 3}
       propertyPath: m_Name
       value: Obstacle
+      objectReference: {fileID: 0}
+    - target: {fileID: 1516073329782179471, guid: ef9e685bd1f52d34ab9ba350d8c539fe, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2180300795875695669, guid: ef9e685bd1f52d34ab9ba350d8c539fe, type: 3}
       propertyPath: m_RootOrder

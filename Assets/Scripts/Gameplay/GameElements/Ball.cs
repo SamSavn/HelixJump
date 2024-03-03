@@ -99,6 +99,15 @@ namespace LKS.GameElements
         {
             base.SetActive(active);
             _collider.enabled = active;
+
+            if(active)
+            {
+                _rigidbody.WakeUp();
+            }
+            else
+            {
+                _rigidbody.Sleep();
+            }
         }
 #endregion
 

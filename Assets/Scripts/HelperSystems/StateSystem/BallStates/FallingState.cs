@@ -42,9 +42,8 @@ namespace LKS.States.BallStates
 
         public override void UpdateState()
         {
-            _currentPosition = _ball.Position;
-            _currentPosition.y += GameManager.SlidingSpeed / _distance * Time.deltaTime;
-            _ball.Position = _ball.InitialPosition;
+            _currentPosition = _ball.InitialPosition + Vector3.up * (GameManager.SlidingSpeed / _distance) * Time.deltaTime;
+            _ball.Position = _currentPosition;
 
             if (_ball.Position.y >= _ball.InitialPosition.y)
             {

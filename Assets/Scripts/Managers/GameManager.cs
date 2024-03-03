@@ -17,7 +17,7 @@ namespace LKS.Managers
         public static GameCamera GameCamera { get; private set; }
         public static Tower Tower { get; private set; }
         public static Ball Ball { get; private set; }
-        public static float SlidingSpeed {  get; set; } = 1f;
+        public static float SlidingSpeed {  get; set; } = .5f;
 #endregion
 
 #region Constructors
@@ -53,9 +53,13 @@ namespace LKS.Managers
             if(state == null) 
                 return;
 
-            if(state.GetType() == typeof(FallingState))
+            if (state.GetType() == typeof(FallingState))
             {
                 Tower.Slide();
+            }
+            else if (state.GetType() == typeof(DeadState))
+            {
+                StopGame();
             }
         }
 

@@ -15,14 +15,13 @@ namespace LKS.States.BallStates
         public override void OnEnter()
         {
             base.OnEnter();
-            _ball.Rigidbody.velocity = Vector3.zero;
-            _ball.Rigidbody.isKinematic = true;
+            _ball.Rigidbody.Sleep();
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            _ball.Rigidbody.isKinematic = false;
+            _ball.Rigidbody.WakeUp();
         }
 
         public override void UpdateState()
