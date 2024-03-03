@@ -55,15 +55,17 @@ namespace LKS.GameElements
             }
 
             float randomizationFactor = GetRandomizationFactor(levelGenerationData);
+            float obstaclesRandomizationFactor = GetObstaclesRandomizationFactor(levelGenerationData);
 
             if (index == 0)
             {
-                randomizationFactor = levelGenerationData.PlatformsMinRandomization;
+                randomizationFactor = levelGenerationData.PlatformsMinRandomizationFactor;
+                obstaclesRandomizationFactor = 0;
             }
 
             for (int i = 0; i < _segments.Length; i++)
             {
-                _segments[i].Initialize(this, ActivateSegment(_segments[i]));
+                _segments[i].Initialize(this, ActivateSegment(_segments[i]), Random.value <= obstaclesRandomizationFactor);
             }
 
             _stateMachine = new StateMachine<PlatformState>(new IdleState(this));
@@ -107,8 +109,13 @@ namespace LKS.GameElements
 #region Private Methods
         private float GetRandomizationFactor(LevelGenerationData levelGenerationData)
         {
-            return Random.Range(levelGenerationData.PlatformsMinRandomization, levelGenerationData.PlatformsMaxRandomizationFactor);
-        } 
+            return Random.Range(levelGenerationData.PlatformsMinRandomizationFactor, levelGenerationData.PlatformsMaxRandomizationFactor);
+        }
+
+        private float GetObstaclesRandomizationFactor(LevelGenerationData levelGenerationData)
+        {
+            return Random.Range(levelGenerationData.ObstaclesMinRandomizationFactor, levelGenerationData.ObstaclesMaxRandomizationFactor);
+        }
 
         private void OnSlideCompleted()
         {
