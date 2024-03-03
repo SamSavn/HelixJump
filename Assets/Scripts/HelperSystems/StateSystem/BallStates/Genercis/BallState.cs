@@ -1,8 +1,10 @@
 using LKS.GameElements;
+using LKS.GameUpdate;
+using LKS.Managers;
 
-namespace LKS.States
+namespace LKS.States.BallStates
 {
-    public abstract class BallState : IState
+    public abstract class BallState : IState, IUpdatable
     {
 #region Constants & Fields
         protected Ball _ball;
@@ -18,11 +20,17 @@ namespace LKS.States
 #region Public Methods
         public virtual void OnEnter()
         {
-
+            GameManager.OnBallStateChanged(this);
         }
 
         public virtual void OnExit()
         {
+
+        }
+
+        public void CustomUpdate()
+        {
+            UpdateState();
         }
 
         public abstract void UpdateState(); 

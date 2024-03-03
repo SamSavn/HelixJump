@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace LKS.States
+namespace LKS.States.GameStates
 {
     public class MainMenuState : GameState
     {

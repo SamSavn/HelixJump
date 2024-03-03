@@ -1,6 +1,4 @@
 using LKS.Data;
-using LKS.Extentions;
-using LKS.GameElements;
 using LKS.Helpers;
 using LKS.Inputs;
 using System;
@@ -11,7 +9,7 @@ namespace LKS.Managers
 {
     public static partial class InputManager
     {
-        #region Constants & Fields
+#region Constants & Fields
         private const string DATA_ADDRESS = "InputData";
 
         public static event Action<InputInfo> OnInputDown;
@@ -125,12 +123,12 @@ namespace LKS.Managers
 
         private static Vector2 GetMoveDirection()
         {
-            if (!GetInputHold() || !_startPosition.HasValue)
+            if (!GetInputHold() || !_lastMovePosition.HasValue)
             {
                 return Vector2.zero;
             }
             
-            _moveDirection = _currentPosition - _startPosition.Value;
+            _moveDirection = _currentPosition - _lastMovePosition.Value;
             return _moveDirection.normalized;
         }
 
@@ -181,8 +179,11 @@ namespace LKS.Managers
 
         private static void Reset()
         {
-            _swipeInfo.Reset();
+            _swipeInfo = new SwipeInfo();
             _inputHoldInfo = new InputInfo();
+
+            _currentPosition = Vector2.zero;
+            _moveDirection = Vector2.zero;
 
             _pressTime = 0;
             _lastMovePosition = null;

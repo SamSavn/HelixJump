@@ -37,6 +37,7 @@ namespace LKS.AssetsManagement
         {
             if (Create(address).TrySpawn(out T obj))
             {
+                obj.gameObject.name = $"{typeof(T).Name} {obj.Id}";
                 return obj;
             }
 

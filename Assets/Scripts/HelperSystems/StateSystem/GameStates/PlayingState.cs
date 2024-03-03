@@ -1,7 +1,7 @@
 using LKS.Managers;
 using UnityEngine;
 
-namespace LKS.States
+namespace LKS.States.GameStates
 {
     public class PlayingState : GameState
     {
@@ -9,6 +9,7 @@ namespace LKS.States
         {
             base.OnEnter();
             InputManager.Start();
+            GameManager.Ball.StartGame();
         }
 
         public override void OnExit()

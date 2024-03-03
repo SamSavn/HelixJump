@@ -7,12 +7,12 @@ namespace LKS.Managers
 {
     public static class GameUpdateManager
     {
-        #region Constants & Fields
+#region Constants & Fields
         private const string CONTROLLER_ADDRESS = "GameUpdateController";
         private static GameUpdateController _controller;
-        #endregion
+#endregion
 
-        #region Properties
+#region Properties
         private static GameUpdateController Controller
         {
             get
@@ -26,16 +26,16 @@ namespace LKS.Managers
             }
             set => _controller = value;
         }
-        #endregion
+#endregion
 
-        #region Constructors
+#region Constructors
         static GameUpdateManager()
         {
             Controller = CreateController();
         }
-        #endregion
+#endregion
 
-        #region Public Methods
+#region Public Methods
         public static void AddUpdatable(IUpdatable updatable)
         {
             Controller.AddUpdatable(updatable);
@@ -51,13 +51,17 @@ namespace LKS.Managers
             return Controller.StartCoroutine(routine);
         }
 
-        public static void StopCoroutine(IEnumerator routine)
+        public static void StopCoroutine(ref IEnumerator routine)
         {
-            Controller.StopCoroutine(routine);
+            if (routine != null)
+            {
+                Controller.StopCoroutine(routine); 
+                routine = null;
+            }
         }
-        #endregion
+#endregion
 
-        #region Private Methods
+#region Private Methods
         private static GameUpdateController CreateController()
         {
             if (_controller != null)
@@ -77,6 +81,6 @@ namespace LKS.Managers
 
             return GameObject.Instantiate(prefab).GetComponent<GameUpdateController>();
         }
-        #endregion
+#endregion
     }
 }

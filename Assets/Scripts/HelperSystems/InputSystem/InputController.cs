@@ -1,5 +1,6 @@
 using LKS.GameUpdate;
 using System;
+using UnityEngine;
 
 namespace LKS.Managers
 {
@@ -20,7 +21,7 @@ namespace LKS.Managers
 #endregion
 
 #region Public Methods
-            public void Update()
+            public void CustomUpdate()
             {
                 OnUpdate?.Invoke();
             }

@@ -1,5 +1,6 @@
 using LKS.Managers;
 using LKS.States;
+using LKS.States.BallStates;
 using UnityEngine;
 
 namespace LKS.GameElements
@@ -8,6 +9,7 @@ namespace LKS.GameElements
     {
 #region Serialized Fields
         [SerializeField] private Rigidbody _rigidbody;
+        [SerializeField] private Collider _collider;
         [SerializeField] private float _jumpForce;
 #endregion
 
@@ -23,8 +25,17 @@ namespace LKS.GameElements
 #region Unity Methods
         private void Awake()
         {            
-            InitialPosition = transform.position;
-            _stateMachine = new StateMachine<BallState>(new IdleState(this));
+            InitialPosition = Position;
+            _stateMachine = new StateMachine<BallState>(new WaitingState(this));
+
+            GameManager.SetBall(this);
+        }
+#endregion
+
+#region Public Methods
+        public void StartGame()
+        {
+            _stateMachine?.ChangeState(new IdleState(this));
         }
 #endregion
 
@@ -40,6 +51,11 @@ namespace LKS.GameElements
         private void OnObstacleHit(Collision collision)
         {
             Die();
+        }
+
+        private void OnFallEnded()
+        {
+            _stateMachine?.ChangeState(new IdleState(this));
         }
 #endregion
 
@@ -65,7 +81,7 @@ namespace LKS.GameElements
             }
             else
             {
-                _stateMachine.ChangeState(new FallingState(this));
+                _stateMachine.ChangeState(new FallingState(this, OnFallEnded));
             }
         }
 
@@ -77,6 +93,12 @@ namespace LKS.GameElements
         private void ResetState()
         {
             _stateMachine.Reset();
+        }
+
+        public override void SetActive(bool active)
+        {
+            base.SetActive(active);
+            _collider.enabled = active;
         }
 #endregion
 
