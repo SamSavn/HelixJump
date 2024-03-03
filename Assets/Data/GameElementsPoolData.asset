@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb67648637c3fe45a0a81416cfc01b4, type: 3}
   m_Name: GameElementsPoolData
   m_EditorClassIdentifier: 
-  _platforms: 50
+  _platforms: 20

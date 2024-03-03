@@ -1,13 +1,17 @@
+using LKS.Extentions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace LKS.Iterations
 {
     public class Iterator : IDisposable
     {
+        public event Action OnIterationCompleted;
         private List<IIterable> _iterables;
         
-        private IIterable First
+        public IIterable First
         {
             get
             {
@@ -22,7 +26,11 @@ namespace LKS.Iterations
 
         public Iterator(IEnumerable<IIterable> iterables)
         {
-            _iterables = new List<IIterable>(iterables);
+            int count = iterables.Count();
+            for (int i = 0; i < count; i++)
+            {
+                Add(iterables.ElementAt(i));
+            }
         }
 
         public void Iterate()
@@ -35,6 +43,22 @@ namespace LKS.Iterations
 
         public void Add(IIterable item)
         {
+            _iterables ??= new List<IIterable>();
+            int count = _iterables.Count;
+
+            if (count > 0)
+            {
+                _iterables[^1].Next = item;
+
+                item.Previous = _iterables[^1];
+                item.Next = null;
+            }
+            else
+            {
+                item.ResetIterable();
+            }
+
+            item.OnIterationComplete = OnItemIterationCompleted;
             _iterables.Add(item);
         }
 
@@ -42,6 +66,7 @@ namespace LKS.Iterations
         {
             if (_iterables.Contains(item))
             {
+                item.ResetIterable();
                 _iterables.Remove(item);
             }
         }
@@ -51,6 +76,14 @@ namespace LKS.Iterations
             if (_iterables != null)
             {
                 _iterables.Clear(); 
+            }
+        }
+
+        private void OnItemIterationCompleted(IIterable iterable)
+        {
+            if(iterable.Next == null)
+            {
+                OnIterationCompleted?.Invoke();
             }
         }
     }

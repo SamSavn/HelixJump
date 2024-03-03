@@ -17,6 +17,7 @@ namespace LKS.States.TowerStates
         {
             base.OnEnter();
             _iterator.Iterate();
+            _tower.Idle();
         }
     }
 }

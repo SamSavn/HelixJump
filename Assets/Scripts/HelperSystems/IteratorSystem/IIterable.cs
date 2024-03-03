@@ -1,7 +1,10 @@
+using System;
+
 namespace LKS.Iterations
 {
     public interface IIterable
     {
+        Action<IIterable> OnIterationComplete { get; set; }
         IIterable Previous { get; set; }
         IIterable Next { get; set; }
         void OnIteration();
@@ -10,10 +13,17 @@ namespace LKS.Iterations
         {
             OnIteration();
 
-            if(Next != null)
+            if (Next != null)
             {
                 Next.Iterate();
             }
+        }
+
+        void ResetIterable()
+        {
+            OnIterationComplete = null;
+            Previous = null;
+            Next = null;
         }
     }
 }

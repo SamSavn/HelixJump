@@ -3,6 +3,7 @@ using LKS.States;
 using LKS.States.BallStates;
 using LKS.States.GameStates;
 using LKS.States.TowerStates;
+using UnityEngine;
 
 namespace LKS.Managers
 {
@@ -16,7 +17,7 @@ namespace LKS.Managers
         public static GameCamera GameCamera { get; private set; }
         public static Tower Tower { get; private set; }
         public static Ball Ball { get; private set; }
-        public static float SlidingSpeed => .5f;
+        public static float SlidingSpeed => 2f;
 #endregion
 
 #region Constructors

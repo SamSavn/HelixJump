@@ -1,12 +1,9 @@
 using LKS.Data;
-using LKS.Extentions;
 using LKS.Iterations;
-using LKS.Managers;
 using LKS.States;
 using LKS.States.PlatformStates;
 using System;
 using UnityEngine;
-using UnityEngine.Animations;
 using Random = UnityEngine.Random;
 
 namespace LKS.GameElements
@@ -16,6 +13,7 @@ namespace LKS.GameElements
 #region Constants & Fields
         public event Action<bool> OnToggle;
         public event Action<bool> OnEnable;
+        public event Action OnDispose;
 
         private StateMachine<PlatformState> _stateMachine;
         private Tower _tower;
@@ -30,6 +28,7 @@ namespace LKS.GameElements
 #endregion
 
 #region Properties
+        public Action<IIterable> OnIterationComplete { get; set; }
         public IIterable Previous { get; set; }
         public IIterable Next { get; set; }
 #endregion
@@ -96,6 +95,12 @@ namespace LKS.GameElements
         public void OnIteration()
         {
             _stateMachine.ChangeState(new SlidingState(this, _slidingDistance, OnSlideCompleted));            
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            OnDispose?.Invoke();
         }
 #endregion
 

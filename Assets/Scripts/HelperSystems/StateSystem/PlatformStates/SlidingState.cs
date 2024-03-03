@@ -34,6 +34,7 @@ namespace LKS.States.PlatformStates
 
         public override void OnExit()
         {
+            GameUpdateManager.RemoveUpdatable(this);
             base.OnExit();
         }
 
@@ -42,13 +43,14 @@ namespace LKS.States.PlatformStates
             base.UpdateState();
 
             _currentPosition = _platform.LocalPosition;
-            _currentPosition.y += _slidingDistance / GameManager.SlidingSpeed * Time.deltaTime;
+            _currentPosition.y += GameManager.SlidingSpeed / _slidingDistance * Time.deltaTime;
             _platform.LocalPosition = _currentPosition;
 
-            if(_currentPosition.y > _targetPosition.y)
+            if(_currentPosition.y >= _targetPosition.y)
             {
-                GameUpdateManager.RemoveUpdatable(this);
                 _platform.LocalPosition = _targetPosition;
+                _platform.OnIterationComplete?.Invoke(_platform);
+
                 OnComplete?.Invoke();
             }
         }

@@ -21,7 +21,7 @@ namespace LKS.GameElements
         private StateMachine<TowerState> _stateMachine;
 
         private LevelGenerationData _generationData;
-        private LevelGenerator _levelGenerator;
+        private LevelHandler _levelHandler;
         private Iterator _platformsIterator; 
 
         private List<Platform> _platforms = new List<Platform>();
@@ -29,14 +29,12 @@ namespace LKS.GameElements
         private Quaternion _currentRotation;
 
         private float _globalPlatformsDistance;
-        private int _additionalPlatformsOffset;
         private int _maxPlatforms;
 #endregion
 
 #region Properties
-        private float Offset => _additionalPlatformsOffset * _globalPlatformsDistance;
-        private float TopPosThreshold => Position.y + Scale.y + Offset;
-        private float BottomPosThreshold => Position.y - Scale.y - Offset; 
+        private float TopPosThreshold => Position.y + Scale.y;
+        private float BottomPosThreshold => Position.y - Scale.y; 
 #endregion
 
 #region Unity Methods
@@ -51,8 +49,7 @@ namespace LKS.GameElements
                 return;
             }
 
-            _levelGenerator = new LevelGenerator(_generationData);
-            _additionalPlatformsOffset = _generationData.AdditionalPlatformsOffset;
+            _levelHandler = new LevelHandler(_generationData);
             _globalPlatformsDistance = _generationData.PlatformsDistance.LocalToGlobal(Axis.Y, transform);
             _maxPlatforms = Mathf.RoundToInt((TopPosThreshold - BottomPosThreshold) / _globalPlatformsDistance);
 
@@ -69,8 +66,9 @@ namespace LKS.GameElements
 
         private void Start()
         {
-            _platforms = _levelGenerator?.Generate(this, _maxPlatforms);
+            _platforms = _levelHandler?.Generate(this, _maxPlatforms);
             _platformsIterator = new Iterator(_platforms);
+            _platformsIterator.OnIterationCompleted += OnPlatformsIterationCompleted;
         }
 
         private void OnDisable()
@@ -80,12 +78,17 @@ namespace LKS.GameElements
 
             GameUpdateManager.RemoveUpdatable(this);
         }
+
+        private void OnDestroy()
+        {
+            _levelHandler.Dispose();
+        }
 #endregion
 
 #region Public Methods
         public bool CanActivatePlatform(Platform platform)
         {
-            return platform.Position.y.IsInRange(BottomPosThreshold, TopPosThreshold);
+            return platform.Position.y.IsInRange(BottomPosThreshold, TopPosThreshold, false);
         }
 
         public void Rotate(float angle)
@@ -96,7 +99,7 @@ namespace LKS.GameElements
 
         [ContextMenu("Slide")]
         public void Slide()
-        {
+        {            
             _stateMachine.ChangeState(new SlidingState(this, _platformsIterator));
         }
 
@@ -104,9 +107,35 @@ namespace LKS.GameElements
         {
             _stateMachine.ChangeState(new IdleState(this));
         }
+
+        public void CustomUpdate()
+        {
+            if (Input.GetKeyUp(KeyCode.Space))
+            {
+                GameManager.StartGame();
+            }
+        }
 #endregion
 
 #region Event Handlers
+        private void OnPlatformsIterationCompleted()
+        {
+            if (_platformsIterator == null ||
+                _platformsIterator.First is not Platform topPlatform ||
+                CanActivatePlatform(topPlatform))
+            {
+                return;
+            }
+
+            _platformsIterator.Remove(topPlatform);
+            _levelHandler.UpdateLevel(out Platform newPlatform);
+
+            if (newPlatform != null)
+            {
+                _platformsIterator.Add(newPlatform);
+            }
+        }
+
         private void OnSwipe(SwipeInfo info)
         {
             if (!_stateMachine.IsInState<RotatingState>())
@@ -126,15 +155,7 @@ namespace LKS.GameElements
             {
                 _stateMachine.ChangeState(new IdleState(this)); 
             }
-        }
-
-        public void CustomUpdate()
-        {
-            if (Input.GetKeyUp(KeyCode.Space))
-            {
-                GameManager.StartGame();
-            }
-        }
-        #endregion
+        }        
+#endregion
     }
 }

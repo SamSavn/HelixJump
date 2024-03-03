@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LKS.GameElements
 {
-    public class PlatformSegment : GameElement, IDisposable
+    public class PlatformSegment : GameElement
     {
 #region Constants & Fields
         private Platform _platform;
@@ -36,6 +36,7 @@ namespace LKS.GameElements
             {
                 _platform.OnToggle += OnPlatformToggle;
                 _platform.OnEnable += OnPlatformEnabled;
+                _platform.OnDispose += Dispose;
             }
 
             SetActive(_activeForLevel);
@@ -49,12 +50,15 @@ namespace LKS.GameElements
             base.SetActive(active);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
+
             if (_activeForLevel)
             {
                 _platform.OnToggle -= OnPlatformToggle;
                 _platform.OnEnable -= OnPlatformEnabled;
+                _platform.OnDispose -= Dispose;
             }
         }
 #endregion
@@ -71,7 +75,6 @@ namespace LKS.GameElements
         private void OnPlatformEnabled(bool enabled)
         {
             _collider.enabled = enabled;
-            Dispose();
         }
 #endregion
     }

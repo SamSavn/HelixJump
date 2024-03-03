@@ -12,19 +12,17 @@ namespace LKS.Extentions
 
         public static Vector3 AddOnAxis(this Vector3 vector, Axis axis, float value)
         {
-            Vector3 v = vector;
-
             switch (axis)
             {
                 case Axis.X:
-                    return new Vector3(v.x + value, v.y, v.z);
+                    return new Vector3(vector.x + value, vector.y, vector.z);
                 case Axis.Y:
-                    return new Vector3(v.x, v.y + value, v.z);
+                    return new Vector3(vector.x, vector.y + value, vector.z);
                 case Axis.Z:
-                    return new Vector3(v.x, v.y, v.z + value);
+                    return new Vector3(vector.x, vector.y, vector.z + value);
             }
 
-            return v;
+            return vector;
         }
     }
 }

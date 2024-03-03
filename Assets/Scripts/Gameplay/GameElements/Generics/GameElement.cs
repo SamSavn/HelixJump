@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace LKS.GameElements
 {
-    public abstract class GameElement : MonoBehaviour
+    public abstract class GameElement : MonoBehaviour, IDisposable
     {
 #region Properties
         public Vector3 Position
@@ -29,6 +30,12 @@ namespace LKS.GameElements
             set => transform.rotation = value;
         }
 
+        public Vector3 LocalScale
+        {
+            get => transform.localScale;
+            set => transform.localScale = value;
+        }
+
         public Vector3 Scale => transform.lossyScale;
         
         public int Id => gameObject.GetInstanceID();
@@ -38,6 +45,11 @@ namespace LKS.GameElements
         public virtual void SetActive(bool active)
         {
             gameObject.SetActive(active);
+        }
+
+        public virtual void Dispose()
+        {
+            
         }
 #endregion
 
@@ -55,7 +67,7 @@ namespace LKS.GameElements
         public override int GetHashCode()
         {
             return base.GetHashCode();
-        }  
+        }
 #endregion
     }
 }
