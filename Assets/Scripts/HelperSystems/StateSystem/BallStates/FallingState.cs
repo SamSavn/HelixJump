@@ -10,6 +10,7 @@ namespace LKS.States.BallStates
         private Action OnComplete;
         private Vector3 _position;
         private float _speed;
+        private float _distance;
 
 #region Constructors
         public FallingState(Ball ball, Action onComplete) : base(ball)
@@ -23,9 +24,11 @@ namespace LKS.States.BallStates
         {
             base.OnEnter();
 
-            _speed = Mathf.Abs(_ball.Rigidbody.velocity.y) / _ball.Rigidbody.mass;
             _ball.Rigidbody.isKinematic = true;
+
+            _speed = Mathf.Abs(_ball.Rigidbody.velocity.y) / _ball.Rigidbody.mass;
             _position = _ball.Position;
+            _distance = _ball.InitialPosition.y - _position.y;
 
             GameUpdateManager.AddUpdatable(this);
         }
@@ -42,10 +45,10 @@ namespace LKS.States.BallStates
 
         public override void UpdateState()
         {
-            //_position.y += _speed * Time.deltaTime;
-            //_ball.Position = _position;
+            _position.y += _distance / GameManager.SlidingSpeed * Time.deltaTime;
+            _ball.Position = _position;
 
-            //if(_ball.Position.y >= _ball.InitialPosition.y)
+            if (_ball.Position.y >= _ball.InitialPosition.y)
             {
                 _ball.Position = _ball.InitialPosition;
                 OnComplete?.Invoke();

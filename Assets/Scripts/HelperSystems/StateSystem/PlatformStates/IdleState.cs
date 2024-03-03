@@ -15,7 +15,7 @@ namespace LKS.States.PlatformStates
         {
             base.OnEnter();
             _platform.SetActive(GameManager.CanActivatePlatform(_platform));
-            _platform.SetEnabled(_platform.LocalPosition.y <= 0);
+            _platform.SetEnabled(_platform.LocalPosition.y < 1);
         }
     }
 }
