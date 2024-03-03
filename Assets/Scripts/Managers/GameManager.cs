@@ -62,11 +62,6 @@ namespace LKS.Managers
                 StopGame();
             }
         }
-
-        public static void OnTowerStateChanged<TState>(TState state) where TState : TowerState
-        {
-
-        }
 #endregion
 
 #region States Methods
