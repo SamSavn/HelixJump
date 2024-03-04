@@ -15,6 +15,7 @@ namespace LKS.GameElements
         public event Action<bool> OnEnable;
         public event Action OnDispose;
 
+        private LevelGenerationData _levelGenerationData;
         private StateMachine<PlatformState> _stateMachine;
         private Tower _tower;
 
@@ -47,6 +48,7 @@ namespace LKS.GameElements
         {
             _tower = tower;
             _index = index;
+            _levelGenerationData = levelGenerationData;
             _slidingDistance = levelGenerationData.PlatformsDistance;
 
             if (_segments == null || _segments.Length == 0)
@@ -54,8 +56,8 @@ namespace LKS.GameElements
                 _segments = GetComponentsInChildren<PlatformSegment>();
             }
 
-            float randomizationFactor = GetRandomizationFactor(levelGenerationData);
-            float obstaclesRandomizationFactor = GetObstaclesRandomizationFactor(levelGenerationData);
+            float randomizationFactor = GetRandomizationFactor();
+            float obstaclesRandomizationFactor = GetObstaclesRandomizationFactor();
 
             if (index == 0)
             {
@@ -68,7 +70,7 @@ namespace LKS.GameElements
                 _segments[i].Initialize(this, ActivateSegment(_segments[i]), Random.value <= obstaclesRandomizationFactor);
             }
 
-            _stateMachine = new StateMachine<PlatformState>(new IdleState(this));
+            _stateMachine = new StateMachine<PlatformState>(new IdleState(this, levelGenerationData.PlatformsDistance));
 
             bool ActivateSegment(PlatformSegment segment)
             {
@@ -107,19 +109,19 @@ namespace LKS.GameElements
 #endregion
 
 #region Private Methods
-        private float GetRandomizationFactor(LevelGenerationData levelGenerationData)
+        private float GetRandomizationFactor()
         {
-            return Random.Range(levelGenerationData.PlatformsMinRandomizationFactor, levelGenerationData.PlatformsMaxRandomizationFactor);
+            return Random.Range(_levelGenerationData.PlatformsMinRandomizationFactor, _levelGenerationData.PlatformsMaxRandomizationFactor);
         }
 
-        private float GetObstaclesRandomizationFactor(LevelGenerationData levelGenerationData)
+        private float GetObstaclesRandomizationFactor()
         {
-            return Random.Range(levelGenerationData.ObstaclesMinRandomizationFactor, levelGenerationData.ObstaclesMaxRandomizationFactor);
+            return Random.Range(_levelGenerationData.ObstaclesMinRandomizationFactor, _levelGenerationData.ObstaclesMaxRandomizationFactor);
         }
 
         private void OnSlideCompleted()
         {
-            _stateMachine.ChangeState(new IdleState(this));
+            _stateMachine.ChangeState(new IdleState(this, _levelGenerationData.PlatformsDistance));
         }
 #endregion
     }

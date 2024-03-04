@@ -7,15 +7,19 @@ namespace LKS.States.PlatformStates
 {
     public class IdleState : PlatformState
     {
-        public IdleState(Platform platform) : base(platform)
+        float _threshold;
+
+        public IdleState(Platform platform, float activationThreshold) : base(platform)
         {
+            _threshold = activationThreshold;
         }
 
         public override void OnEnter()
         {
             base.OnEnter();
+
             _platform.SetActive(GameManager.CanActivatePlatform(_platform));
-            _platform.SetEnabled(_platform.LocalPosition.y < 1);
+            _platform.SetEnabled(_platform.LocalPosition.y < _threshold);
         }
     }
 }

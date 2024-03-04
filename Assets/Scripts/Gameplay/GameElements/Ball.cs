@@ -48,7 +48,7 @@ namespace LKS.GameElements
             }
         }
 
-        private void OnObstacleHit(Collision collision)
+        private void OnObstacleHit(Collision _)
         {
             Die();
         }
@@ -99,6 +99,15 @@ namespace LKS.GameElements
         {
             base.SetActive(active);
             _collider.enabled = active;
+
+            if(active)
+            {
+                _rigidbody.WakeUp();
+            }
+            else
+            {
+                _rigidbody.Sleep();
+            }
         }
 #endregion
 
@@ -110,11 +119,11 @@ namespace LKS.GameElements
 
             if (LayerMaskManager.IsPlatformSegment(collision.gameObject))
             {
-                    OnSegmentHit(collision);
+                OnSegmentHit(collision);
             }
             else if (LayerMaskManager.IsObstacle(collision.gameObject))
             {
-                    OnObstacleHit(collision);
+                OnObstacleHit(collision);
             }
         }
 
