@@ -1,3 +1,4 @@
+using DG.Tweening;
 using LKS.Data;
 using LKS.Extentions;
 using LKS.GameElements;
@@ -19,6 +20,8 @@ namespace LKS.States.PlatformStates
         private float _slidingDistance;
         private float _disableThreshold;
 
+        private Tween _tween;
+
         public SlidingState(Platform platform, LevelGenerationData levelGenerationData, Action onComplete) : base(platform)
         {
             _slidingDistance = levelGenerationData.PlatformsDistance;
@@ -28,6 +31,9 @@ namespace LKS.States.PlatformStates
             _targetPosition = _initialPosition.AddOnAxis(Axis.Y, _slidingDistance);
 
             OnComplete = onComplete;
+
+            _tween = _platform.transform.DOLocalMoveY(_targetPosition.y, GameManager.SlidingSpeed).SetEase(Ease.Linear);
+            _tween.OnComplete(OnMovementCompleted);
         }
 
         public override void OnEnter()
@@ -46,19 +52,27 @@ namespace LKS.States.PlatformStates
         {
             base.UpdateState();
 
-            _currentPosition = _platform.LocalPosition;
-            _currentPosition.y += GameManager.SlidingSpeed / _slidingDistance * Time.deltaTime;
-            _platform.LocalPosition = _currentPosition;
+            _tween.PlayForward();
 
-            _platform.SetEnabled(_platform.LocalPosition.y < _disableThreshold);
+            //_currentPosition = _platform.LocalPosition;
+            //_currentPosition.y += GameManager.SlidingSpeed / _slidingDistance * Time.deltaTime;
+            //_platform.LocalPosition = _currentPosition;
 
-            if (_currentPosition.y >= _targetPosition.y)
-            {
-                _platform.LocalPosition = _targetPosition;
-                _platform.OnIterationComplete?.Invoke(_platform);
+            //_platform.SetEnabled(_platform.LocalPosition.y < _disableThreshold);
 
-                OnComplete?.Invoke();
-            }
+            //if (_currentPosition.y >= _targetPosition.y)
+            //{
+            //    _platform.LocalPosition = _targetPosition;
+            //    _platform.OnIterationComplete?.Invoke(_platform);
+
+            //    OnComplete?.Invoke();
+            //}
+        }
+
+        private void OnMovementCompleted()
+        {
+            _platform.OnIterationComplete?.Invoke(_platform);
+            OnComplete?.Invoke();
         }
     }
 }

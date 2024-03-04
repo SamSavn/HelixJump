@@ -1,3 +1,4 @@
+using DG.Tweening;
 using LKS.GameElements;
 using LKS.Managers;
 using System;
@@ -10,6 +11,8 @@ namespace LKS.States.BallStates
     {
         private Action OnComplete;
         private Vector3 _currentPosition;
+        private Vector3 _targetPosition;
+        private Tween _tween;
         private float _distance;
 
 #region Constructors
@@ -26,31 +29,43 @@ namespace LKS.States.BallStates
 
             _ball.Rigidbody.Sleep();
             _currentPosition = _ball.Position;
+            _targetPosition = _currentPosition;
+            _targetPosition.y = _ball.InitialPosition.y;
             _distance = _ball.InitialPosition.y - _currentPosition.y;
 
-            GameUpdateManager.AddUpdatable(this);
+            _tween = _ball.Rigidbody.DOMove(_targetPosition, GameManager.SlidingSpeed).SetEase(Ease.InSine);
+            _tween.OnComplete(OnTweenCompleted);
+
+            //GameUpdateManager.AddUpdatable(this);
         }
 
         public override void OnExit()
         {
             base.OnExit();
 
-            GameUpdateManager.RemoveUpdatable(this);
+            //GameUpdateManager.RemoveUpdatable(this);
 
             _ball.Rigidbody.WakeUp();
         }
 
         public override void UpdateState()
         {
-            _currentPosition = _ball.InitialPosition + Vector3.up * (GameManager.SlidingSpeed / _distance) * Time.deltaTime;
-            _ball.Position = _currentPosition;
+            _tween.PlayForward();
 
-            if (_ball.Position.y >= _ball.InitialPosition.y)
-            {
-                _ball.Position = _ball.InitialPosition;
-                OnComplete?.Invoke();
-            }
+            //_currentPosition = _ball.InitialPosition + Vector3.up * (GameManager.SlidingSpeed / _distance) * Time.deltaTime;
+            //_ball.Position = _currentPosition;
+
+            //if (_ball.Position.y >= _ball.InitialPosition.y)
+            //{
+            //    _ball.Position = _ball.InitialPosition;
+            //    OnComplete?.Invoke();
+            //}
         } 
 #endregion
+
+        private void OnTweenCompleted()
+        {
+            OnComplete?.Invoke();
+        }
     }
 }
