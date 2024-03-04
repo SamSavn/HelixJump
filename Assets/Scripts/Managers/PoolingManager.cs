@@ -1,8 +1,10 @@
 using LKS.AssetsManagement;
 using LKS.Data;
 using LKS.GameElements;
+using LKS.GameElements.Collectibles;
 using LKS.Helpers;
 using LKS.Pooling;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LKS.Managers
@@ -60,6 +62,11 @@ namespace LKS.Managers
             for (int i = 0; i < _gameElementsData.Platforms; i++)
             {
                 AddToPool(_gameElementFactory.CreatePlatform());
+            }
+
+            for (int j = 0; j < _gameElementsData.PlatformErasers; j++)
+            {
+                AddToPool(_gameElementFactory.CreatePlatformsEraser());
             }
         }
 #endregion

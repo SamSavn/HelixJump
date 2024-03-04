@@ -95,6 +95,14 @@ namespace LKS.GameElements
             Rotation = _currentRotation * Rotation;
         }
 
+        public void TogglePlatforms()
+        {
+            for (int i = 0; i < _platforms.Count; i++)
+            {
+                _platforms[i].ToggleSegments();
+            }
+        }
+
         [ContextMenu("Slide")]
         public void Slide()
         {            

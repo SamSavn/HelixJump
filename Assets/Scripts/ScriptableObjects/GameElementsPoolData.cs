@@ -7,6 +7,10 @@ namespace LKS.Data
     {
         [SerializeField] private int _platforms;
 
+        [Header("Collectibles")]
+        [SerializeField] private int _platformErasers;
+
         public int Platforms => _platforms;
+        public int PlatformErasers => _platformErasers;
     }
 }

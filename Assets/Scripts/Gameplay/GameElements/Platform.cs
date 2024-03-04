@@ -101,6 +101,11 @@ namespace LKS.GameElements
             OnEnable?.Invoke(enabled);
         }
 
+        public void ToggleSegments()
+        {
+            OnToggle?.Invoke(!IsActive);
+        }
+
         public void CheckIfEnable()
         {
             SetEnabled(Position.y < GameManager.Ball.Position.y);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using LKS.GameElements;
+using LKS.GameElements.Collectibles;
 
 namespace LKS.AssetsManagement
 {
@@ -7,7 +8,7 @@ namespace LKS.AssetsManagement
     {
 #region Constants & Fields
         private const string PLATFORM_PREFAB_ADDRESS = "Platform";
-        private const string OBSTACLE_PREFAB_ADDRESS = "Obstacle";
+        private const string COLLECTIBLES_ADDRESS = "Collectibles";
 
         private readonly Dictionary<string, ISpawner> _spawners;
 #endregion
@@ -20,14 +21,14 @@ namespace LKS.AssetsManagement
 #endregion
 
 #region Private Methods
-        private ISpawner Create(string address)
+        private ISpawner GetSpawner(string address, bool loadAll = false)
         {
             if (_spawners.TryGetValue(address, out ISpawner spawnable))
             {
                 return spawnable;
             }
 
-            _spawners[address] = new GameElementSpawner(address);
+            _spawners[address] = new GameElementSpawner(address, loadAll);
             return _spawners[address];
         }
 #endregion
@@ -35,7 +36,7 @@ namespace LKS.AssetsManagement
 #region Public Methods
         public T Create<T>(string address) where T : GameElement
         {
-            if (Create(address).TrySpawn(out T obj))
+            if (GetSpawner(address).TrySpawn(out T obj))
             {
                 obj.gameObject.name = $"{typeof(T).Name} {obj.Id}";
                 return obj;
@@ -44,10 +45,35 @@ namespace LKS.AssetsManagement
             return null;
         }
 
+        public List<T> CreateAll<T>(string address) where T : GameElement
+        {
+            if (GetSpawner(address, loadAll: true).TrySpawnAll(out List<T> objs))
+            {
+                foreach (T obj in objs)
+                {
+                    obj.gameObject.name = $"{typeof(T).Name} {obj.Id}";
+                }
+
+                return objs;
+            }
+
+            return null;
+        }
+
         public Platform CreatePlatform()
         {
             return Create<Platform>(PLATFORM_PREFAB_ADDRESS);
-        } 
+        }
+
+        public PlatformsEraser CreatePlatformsEraser()
+        {
+            return Create<PlatformsEraser>(COLLECTIBLES_ADDRESS);
+        }
+
+        public List<Collectible> CreateCollectibles()
+        {
+            return CreateAll<Collectible>(COLLECTIBLES_ADDRESS);
+        }
 #endregion
     }
 }
