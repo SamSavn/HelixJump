@@ -19,7 +19,11 @@ namespace LKS.States.PlatformStates
             base.OnEnter();
 
             _platform.SetActive(GameManager.CanActivatePlatform(_platform));
-            _platform.SetEnabled(_platform.LocalPosition.y < _threshold);
+
+            if (_platform.IsActive)
+            {
+                _platform.CheckIfEnable(); 
+            }
         }
     }
 }

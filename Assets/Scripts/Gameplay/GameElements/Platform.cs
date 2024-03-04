@@ -1,8 +1,10 @@
 using LKS.Data;
 using LKS.Iterations;
+using LKS.Managers;
 using LKS.States;
 using LKS.States.PlatformStates;
 using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -16,6 +18,8 @@ namespace LKS.GameElements
         public event Action OnDispose;
 
         private LevelGenerationData _levelGenerationData;
+        private Tower _tower;
+
         private StateMachine<PlatformState> _stateMachine;
 
         private int _index;
@@ -45,12 +49,13 @@ namespace LKS.GameElements
             _segments = GetComponentsInChildren<PlatformSegment>();
 #endif
         }
-#endregion
+        #endregion
 
 #region Public Methods
-        public void Initialize(int index, LevelGenerationData levelGenerationData)
+        public void Initialize(int index, Tower tower, LevelGenerationData levelGenerationData)
         {
             _index = index;
+            _tower = tower;
             _levelGenerationData = levelGenerationData;
 
             if (_segments == null || _segments.Length == 0)
@@ -96,15 +101,24 @@ namespace LKS.GameElements
             OnEnable?.Invoke(enabled);
         }
 
+        public void CheckIfEnable()
+        {
+            SetEnabled(Position.y < GameManager.Ball.Position.y);
+        }
+
         public void OnIteration()
         {
-            _stateMachine.ChangeState(new SlidingState(this, _levelGenerationData, OnSlideCompleted));            
+            _stateMachine.ChangeState(new SlidingState(this, _tower.SlidingDuration, _levelGenerationData, OnSlideCompleted));
         }
 
         public override void Dispose()
         {
             base.Dispose();
+
+            _stateMachine = null;
+
             OnDispose?.Invoke();
+            base.Dispose();
         }
 #endregion
 
@@ -124,7 +138,7 @@ namespace LKS.GameElements
 
             return Random.value <= _randomizationFactor;
         }
-
+        
         private float GetRandomizationFactor()
         {
             return Random.Range(_levelGenerationData.PlatformsMinRandomizationFactor, _levelGenerationData.PlatformsMaxRandomizationFactor);

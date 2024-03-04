@@ -67,6 +67,14 @@ namespace LKS.States
             CurrentState.UpdateState();
         }
 
+        public void RestartState()
+        {
+            if (CurrentState == null)
+                return;
+
+            CurrentState.OnEnter();
+        }
+
         public void Reset()
         {
             ChangeState(_initialState);

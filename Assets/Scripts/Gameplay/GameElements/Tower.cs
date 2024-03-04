@@ -24,7 +24,7 @@ namespace LKS.GameElements
         private LevelHandler _levelHandler;
         private Iterator _platformsIterator; 
 
-        private List<Platform> _platforms = new List<Platform>();
+        private List<Platform> _platforms;
 
         private Quaternion _currentRotation;
 
@@ -32,50 +32,48 @@ namespace LKS.GameElements
         private int _maxPlatforms;
 #endregion
 
+#region Serialized Fields
+        [SerializeField] private float _slidingDuration;
+#endregion
+
 #region Properties
         private float TopPosThreshold => Position.y + Scale.y;
         private float BottomPosThreshold => Position.y - Scale.y; 
+        public float SlidingDuration => _slidingDuration;
 #endregion
 
 #region Unity Methods
         private void Awake()
         {
-            _stateMachine = new StateMachine<TowerState>(new IdleState(this));
             _generationData = AddressablesLoader.LoadSingle<LevelGenerationData>(GENERATION_DATA_ADDRESS);
 
-            if(_generationData == null)
+            if (_generationData == null)
             {
                 Debug.LogError("Unable to load level generation data");
                 return;
             }
 
-            _levelHandler = new LevelHandler(_generationData);
             _globalPlatformsDistance = _generationData.PlatformsDistance.LocalToGlobal(Axis.Y, transform);
             _maxPlatforms = Mathf.RoundToInt((TopPosThreshold - BottomPosThreshold) / _globalPlatformsDistance);
 
             GameManager.SetTower(this);
         }
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
-            InputManager.OnSwipe += OnSwipe;
-            InputManager.OnInputUp += OnInputUp;
+            _levelHandler ??= new LevelHandler(_generationData);
+            _platforms ??= _levelHandler?.Generate(this, _maxPlatforms);
+            _platformsIterator ??= new Iterator(_platforms);
+
+            Idle();
 
             GameUpdateManager.AddUpdatable(this);
+            base.OnEnable();
         }
 
-        private void Start()
+        protected override void OnDisable()
         {
-            _platforms = _levelHandler?.Generate(this, _maxPlatforms);
-            _platformsIterator = new Iterator(_platforms);
-            _platformsIterator.OnIterationCompleted += OnPlatformsIterationCompleted;
-        }
-
-        private void OnDisable()
-        {
-            InputManager.OnSwipe -= OnSwipe;
-            InputManager.OnInputUp -= OnInputUp;
-
+            base.OnDisable();
             GameUpdateManager.RemoveUpdatable(this);
         }
 
@@ -88,7 +86,7 @@ namespace LKS.GameElements
 #region Public Methods
         public bool CanActivatePlatform(Platform platform)
         {
-            return platform.Position.y.IsInRange(BottomPosThreshold, TopPosThreshold, false);
+            return platform.Position.y >= BottomPosThreshold && platform.Position.y < TopPosThreshold;
         }
 
         public void Rotate(float angle)
@@ -105,7 +103,14 @@ namespace LKS.GameElements
 
         public void Idle()
         {
-            _stateMachine.ChangeState(new IdleState(this));
+            if (_stateMachine == null)
+            {
+                _stateMachine = new StateMachine<TowerState>(new IdleState(this));
+            }
+            else
+            {
+                _stateMachine.ChangeState(new IdleState(this));
+            }
         }
 
         public void CustomUpdate()
@@ -113,6 +118,55 @@ namespace LKS.GameElements
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 GameManager.StartGame();
+            }
+        }
+
+        public override void Dispose()
+        {
+            RemoveListeners();
+            GameUpdateManager.RemoveUpdatable(this);
+
+            for (int i = 0; i < _platforms.Count; i++)
+            {
+                PoolingManager.AddToPool(_platforms[i]);
+            }
+
+            _platforms.Clear();
+            _platforms = null;
+
+            _platformsIterator = null;
+
+            _levelHandler = null;
+            _stateMachine = null;
+
+            base.Dispose();
+        }
+#endregion
+
+#region Private Methods
+        protected override void AddListeners()
+        {
+            base.AddListeners();
+
+            InputManager.OnSwipe += OnSwipe;
+            InputManager.OnInputUp += OnInputUp;
+
+            if (_platformsIterator != null)
+            {
+                _platformsIterator.OnIterationCompleted += OnPlatformsIterationCompleted; 
+            }
+        }
+
+        protected override void RemoveListeners()
+        {
+            base.RemoveListeners();
+
+            InputManager.OnSwipe -= OnSwipe;
+            InputManager.OnInputUp -= OnInputUp;
+
+            if (_platformsIterator != null)
+            {
+                _platformsIterator.OnIterationCompleted -= OnPlatformsIterationCompleted; 
             }
         }
 #endregion
