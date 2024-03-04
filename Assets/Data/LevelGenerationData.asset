@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: LevelGenerationData
   m_EditorClassIdentifier: 
   _platformsDistance: 0.25
+  _platformsDisableThreshold: 0.05
   _initialSegmentAngleThreshold: 0.6
+  _maxSegmentsInRow: 4
   _platformsMinRandomization: 0.3
   _platformsMaxRandomization: 0.7
   _obstaclesMinRandomization: 0

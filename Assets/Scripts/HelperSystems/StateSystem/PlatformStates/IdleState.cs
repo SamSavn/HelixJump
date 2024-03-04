@@ -9,9 +9,9 @@ namespace LKS.States.PlatformStates
     {
         float _threshold;
 
-        public IdleState(Platform platform, float activationThreshold) : base(platform)
+        public IdleState(Platform platform, LevelGenerationData levelGenerationData) : base(platform)
         {
-            _threshold = activationThreshold;
+            _threshold = levelGenerationData.PlatformsDistance - levelGenerationData.PlatformsDisableThreshold;
         }
 
         public override void OnEnter()

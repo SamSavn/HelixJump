@@ -1,3 +1,4 @@
+using LKS.Data;
 using LKS.Extentions;
 using LKS.GameElements;
 using LKS.Managers;
@@ -16,10 +17,13 @@ namespace LKS.States.PlatformStates
         private Vector3 _targetPosition;
 
         private float _slidingDistance;
+        private float _disableThreshold;
 
-        public SlidingState(Platform platform, float distance, Action onComplete) : base(platform)
+        public SlidingState(Platform platform, LevelGenerationData levelGenerationData, Action onComplete) : base(platform)
         {
-            _slidingDistance = distance;
+            _slidingDistance = levelGenerationData.PlatformsDistance;
+            _disableThreshold = _slidingDistance - levelGenerationData.PlatformsDisableThreshold;
+
             _initialPosition = _platform.LocalPosition;
             _targetPosition = _initialPosition.AddOnAxis(Axis.Y, _slidingDistance);
 
@@ -46,7 +50,9 @@ namespace LKS.States.PlatformStates
             _currentPosition.y += GameManager.SlidingSpeed / _slidingDistance * Time.deltaTime;
             _platform.LocalPosition = _currentPosition;
 
-            if(_currentPosition.y >= _targetPosition.y)
+            _platform.SetEnabled(_platform.LocalPosition.y < _disableThreshold);
+
+            if (_currentPosition.y >= _targetPosition.y)
             {
                 _platform.LocalPosition = _targetPosition;
                 _platform.OnIterationComplete?.Invoke(_platform);

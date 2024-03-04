@@ -17,10 +17,14 @@ namespace LKS.GameElements
 
         private LevelGenerationData _levelGenerationData;
         private StateMachine<PlatformState> _stateMachine;
-        private Tower _tower;
 
-        private float _slidingDistance;
         private int _index;
+        private int _activeSegmentsStreak;
+
+        private float _randomizationFactor;
+        private float _obstaclesRandomizationFactor;
+
+        private bool _activateSegment;
 #endregion
 
 #region Serialized Fields
@@ -44,43 +48,39 @@ namespace LKS.GameElements
 #endregion
 
 #region Public Methods
-        public void Initialize(int index, Tower tower, LevelGenerationData levelGenerationData)
+        public void Initialize(int index, LevelGenerationData levelGenerationData)
         {
-            _tower = tower;
             _index = index;
             _levelGenerationData = levelGenerationData;
-            _slidingDistance = levelGenerationData.PlatformsDistance;
 
             if (_segments == null || _segments.Length == 0)
             {
                 _segments = GetComponentsInChildren<PlatformSegment>();
             }
 
-            float randomizationFactor = GetRandomizationFactor();
-            float obstaclesRandomizationFactor = GetObstaclesRandomizationFactor();
+            _randomizationFactor = GetRandomizationFactor();
+            _obstaclesRandomizationFactor = GetObstaclesRandomizationFactor();
 
             if (index == 0)
             {
-                randomizationFactor = levelGenerationData.PlatformsMinRandomizationFactor;
-                obstaclesRandomizationFactor = 0;
+                _randomizationFactor = levelGenerationData.PlatformsMinRandomizationFactor;
+                _obstaclesRandomizationFactor = 0;
             }
 
+            _activeSegmentsStreak = 0;
             for (int i = 0; i < _segments.Length; i++)
             {
-                _segments[i].Initialize(this, ActivateSegment(_segments[i]), Random.value <= obstaclesRandomizationFactor);
+                _activateSegment = ActivateSegment(_segments[i]);
+
+                if (_activateSegment)
+                {
+                    _activeSegmentsStreak++;
+                }
+
+                _segments[i].Initialize(this, _activateSegment, Random.value <= _obstaclesRandomizationFactor);
             }
 
-            _stateMachine = new StateMachine<PlatformState>(new IdleState(this, levelGenerationData.PlatformsDistance));
-
-            bool ActivateSegment(PlatformSegment segment)
-            {
-                if (_index > 0)
-                    return Random.value <= randomizationFactor;
-
-                return !segment.IsInitialSegment(levelGenerationData.InitialSegmentAngleThreshold)
-                            ? Random.value <= randomizationFactor
-                            : true;
-            }
+            _stateMachine = new StateMachine<PlatformState>(new IdleState(this, levelGenerationData));            
         }
 
         public override void SetActive(bool active)
@@ -98,7 +98,7 @@ namespace LKS.GameElements
 
         public void OnIteration()
         {
-            _stateMachine.ChangeState(new SlidingState(this, _slidingDistance, OnSlideCompleted));            
+            _stateMachine.ChangeState(new SlidingState(this, _levelGenerationData, OnSlideCompleted));            
         }
 
         public override void Dispose()
@@ -109,6 +109,22 @@ namespace LKS.GameElements
 #endregion
 
 #region Private Methods
+        private bool ActivateSegment(PlatformSegment segment)
+        {
+            if (_index == 0 && segment.IsInitialSegment(_levelGenerationData.InitialSegmentAngleThreshold))
+            {
+                return true;
+            }
+
+            if (_activeSegmentsStreak >= _levelGenerationData.MaxSegmentsInRow)
+            {
+                _activeSegmentsStreak = 0;
+                return false;
+            }
+
+            return Random.value <= _randomizationFactor;
+        }
+
         private float GetRandomizationFactor()
         {
             return Random.Range(_levelGenerationData.PlatformsMinRandomizationFactor, _levelGenerationData.PlatformsMaxRandomizationFactor);
@@ -121,7 +137,7 @@ namespace LKS.GameElements
 
         private void OnSlideCompleted()
         {
-            _stateMachine.ChangeState(new IdleState(this, _levelGenerationData.PlatformsDistance));
+            _stateMachine.ChangeState(new IdleState(this, _levelGenerationData));
         }
 #endregion
     }
