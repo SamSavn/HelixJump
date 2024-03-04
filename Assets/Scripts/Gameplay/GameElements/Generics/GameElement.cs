@@ -39,13 +39,30 @@ namespace LKS.GameElements
         public Vector3 Scale => transform.lossyScale;
         
         public int Id => gameObject.GetInstanceID();
+
+        public bool IsActive => gameObject.activeSelf;
 #endregion
 
-#region Public Methods
+#region Unity Methods
+        protected virtual void OnEnable()
+        {
+            AddListeners();             
+        }
+
+        protected virtual void OnDisable()
+        {
+            RemoveListeners();
+        }
+        #endregion
+
+        #region Public Methods
         public virtual void SetActive(bool active)
         {
             gameObject.SetActive(active);
         }
+
+        protected virtual void AddListeners() { }
+        protected virtual void RemoveListeners() { }
 
         public virtual void Dispose()
         {

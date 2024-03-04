@@ -42,7 +42,7 @@ namespace LKS.GameElements
 #region Private Methods
         private void OnSegmentHit(Collision collision)
         {
-            if (Vector3.Dot(collision.GetContact(0).normal, Vector3.up) > 0.9f)
+            if (Vector3.Dot(collision.GetContact(0).normal, Vector3.up) > 0.8f)
             {
                 Bounce();
             }
@@ -52,11 +52,6 @@ namespace LKS.GameElements
         {
             Die();
         }
-
-        private void OnFallEnded()
-        {
-            _stateMachine?.ChangeState(new IdleState(this));
-        }
 #endregion
 
 #region States Methods
@@ -64,7 +59,7 @@ namespace LKS.GameElements
         {
             if (_stateMachine.IsInState<BouncingState>())
             {
-                _stateMachine.UpdateState();
+                _stateMachine.RestartState();
             }
             else
             {
@@ -72,16 +67,15 @@ namespace LKS.GameElements
             }
         }
 
-        [ContextMenu("Fall")]
         private void Fall()
         {
             if (_stateMachine.IsInState<FallingState>())
             {
-                _stateMachine.UpdateState();
+                _stateMachine.RestartState();
             }
             else
             {
-                _stateMachine.ChangeState(new FallingState(this, OnFallEnded));
+                _stateMachine.ChangeState(new FallingState(this));
             }
         }
 

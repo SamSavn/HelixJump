@@ -95,7 +95,7 @@ namespace LKS.Helpers
             _newPlatform.transform.SetParent(_tower.transform, false);
             _newPlatform.transform.SetLocalPositionAndRotation(_platformPosition, Quaternion.Euler(_platformRotation));
             _newPlatform.LocalScale = Vector3.one;            
-            _newPlatform.Initialize(index, _levelGenerationData);
+            _newPlatform.Initialize(index, _tower, _levelGenerationData);
 
             _level.Add(_newPlatform);
         }

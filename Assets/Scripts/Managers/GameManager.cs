@@ -17,7 +17,6 @@ namespace LKS.Managers
         public static GameCamera GameCamera { get; private set; }
         public static Tower Tower { get; private set; }
         public static Ball Ball { get; private set; }
-        public static float SlidingSpeed {  get; set; } = .3f;
 #endregion
 
 #region Constructors
