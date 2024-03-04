@@ -27,11 +27,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - GameElement
-  - m_GUID: 17c947276c140e54a85fcecf4e5dc038
-    m_Address: Obstacle
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - GameElement
   - m_GUID: cd8082b205818b44bb7b2df36bc3aae1
     m_Address: GameElementsPoolData
     m_ReadOnly: 0
