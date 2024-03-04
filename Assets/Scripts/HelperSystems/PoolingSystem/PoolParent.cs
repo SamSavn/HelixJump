@@ -1,14 +1,10 @@
+using LKS.Utils;
 using UnityEngine;
 
 namespace LKS.Pooling
 {
-    public class PoolParent : MonoBehaviour
+    public class PoolParent : PersistentMonoBehaviour
     {
-        public void Initialize()
-        {
-            DontDestroyOnLoad(gameObject);
-        }
-
         public void Add<T>(T child) where T : Component
         {
             child.transform.SetParent(transform);

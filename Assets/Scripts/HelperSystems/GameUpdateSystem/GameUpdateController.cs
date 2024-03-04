@@ -1,4 +1,5 @@
 using LKS.Managers;
+using LKS.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace LKS.GameUpdate
 {
-    public class GameUpdateController : MonoBehaviour, IDisposable
+    public class GameUpdateController : PersistentMonoBehaviour, IDisposable
     {
         private List<IUpdatable> _updatables = new ();
         private IUpdatable _updatable;
@@ -15,9 +16,9 @@ namespace LKS.GameUpdate
         private int _updatableCount = 0;
         private bool _canUpdate;
 
-        private void Awake()
+        protected override void Awake()
         {
-            DontDestroyOnLoad(this);
+            base.Awake();
             Dispose();
         }
 

@@ -23,7 +23,6 @@ namespace LKS.Managers
         static PoolingManager()
         {
             _poolParent = new GameObject("Pool").AddComponent<PoolParent>();
-            _poolParent.Initialize();
 
             _gameElementsData = AddressablesLoader.LoadSingle<GameElementsPoolData>(GE_POOL_DATA_ADDRESS);
             _gameElementsPool = new ObjectPool<GameElement>();
