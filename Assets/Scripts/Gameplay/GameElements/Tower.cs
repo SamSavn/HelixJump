@@ -192,20 +192,20 @@ namespace LKS.GameElements
 
         private void OnSwipe(SwipeInfo info)
         {
-            if (!_stateMachine.IsInState<RotatingState>())
+            if (!_stateMachine.HasState<RotatingState>())
             {
                 _stateMachine.ChangeState(new RotatingState(this, info));
             }
             else
             {
                 _stateMachine.GetCurrentState<RotatingState>().Update(info);
-                _stateMachine.UpdateState();
+                _stateMachine.UpdateStates();
             }
         }
 
         private void OnInputUp(InputInfo _)
         {
-            if (!_stateMachine.IsInState<IdleState>())
+            if (!_stateMachine.HasState<IdleState>())
             {
                 _stateMachine.ChangeState(new IdleState(this)); 
             }

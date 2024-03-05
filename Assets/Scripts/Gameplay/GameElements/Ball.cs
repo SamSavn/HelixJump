@@ -57,7 +57,7 @@ namespace LKS.GameElements
 #region States Methods
         private void Bounce()
         {
-            if (_stateMachine.IsInState<BouncingState>())
+            if (_stateMachine.HasState<BouncingState>())
             {
                 _stateMachine.RestartState();
             }
@@ -69,7 +69,7 @@ namespace LKS.GameElements
 
         private void Fall()
         {
-            if (_stateMachine.IsInState<FallingState>())
+            if (_stateMachine.HasState<FallingState>())
             {
                 _stateMachine.RestartState();
             }
