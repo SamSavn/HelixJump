@@ -29,17 +29,21 @@ namespace LKS.GameElements
         private Quaternion _currentRotation;
 
         private float _globalPlatformsDistance;
+        private float _currentSlideDuration;
+
         private int _maxPlatforms;
 #endregion
 
 #region Serialized Fields
-        [SerializeField] private float _slidingDuration;
+        [SerializeField] private float _slidingDefaultDuration;
+        [SerializeField] private float _slidingMinDuration;
+        [SerializeField] private float _slidingDurationModifier;
 #endregion
 
 #region Properties
         private float TopPosThreshold => Position.y + Scale.y;
         private float BottomPosThreshold => Position.y - Scale.y; 
-        public float SlidingDuration => _slidingDuration;
+        public float SlidingDuration => _currentSlideDuration;
 #endregion
 
 #region Unity Methods
@@ -88,6 +92,20 @@ namespace LKS.GameElements
         public bool CanActivatePlatform(Platform platform)
         {
             return platform.Position.y >= BottomPosThreshold && platform.Position.y < TopPosThreshold;
+        }
+
+        public void ResetSlideDuration()
+        {
+            _currentSlideDuration = _slidingDefaultDuration;
+        }
+
+        public void UpdateSlideDuration()
+        {
+            if(_currentSlideDuration > _slidingMinDuration)
+            {
+                _currentSlideDuration -= _slidingDurationModifier;
+                _currentSlideDuration = Mathf.Max(_currentSlideDuration, _slidingMinDuration);
+            }
         }
 
         public void Rotate(float angle)
@@ -149,8 +167,7 @@ namespace LKS.GameElements
         {
             base.AddListeners();
 
-            //InputManager.OnSwipe += OnSwipe;
-            //InputManager.OnInputUp += OnInputUp;
+            GameManager.BallStateChanged += OnBallStateChanged;
 
             if (_platformsIterator != null)
             {
@@ -162,8 +179,7 @@ namespace LKS.GameElements
         {
             base.RemoveListeners();
 
-            //InputManager.OnSwipe -= OnSwipe;
-            //InputManager.OnInputUp -= OnInputUp;
+            GameManager.BallStateChanged -= OnBallStateChanged;
 
             if (_platformsIterator != null)
             {
@@ -173,6 +189,19 @@ namespace LKS.GameElements
 #endregion
 
 #region Event Handlers
+        private void OnBallStateChanged(States.BallStates.BallState state)
+        {
+            if (state.GetType() == typeof(States.BallStates.FallingState))
+            {
+                Slide();
+                UpdateSlideDuration();
+            }
+            else if (state.GetType() == typeof(States.BallStates.BouncingState))
+            {
+                ResetSlideDuration();
+            }
+        }
+
         private void OnPlatformsIterationCompleted()
         {
             if (_platformsIterator == null ||

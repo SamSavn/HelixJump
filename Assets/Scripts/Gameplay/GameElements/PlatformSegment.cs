@@ -28,7 +28,7 @@ namespace LKS.GameElements
 #region Public Methods
         public bool IsInitialSegment(float angleThreshold)
         {
-            Vector3 toCamera = GameManager.GameCamera.Position - Position;
+            Vector3 toCamera = GameManager.GameCamera.CameraPosition - Position;
             toCamera.Normalize();
 
             float dot = Vector3.Dot(transform.forward, toCamera);
@@ -48,7 +48,7 @@ namespace LKS.GameElements
             if (_activeForLevel)
             {
                 _platform.OnToggle += OnPlatformToggle;
-                _platform.OnEnable += OnPlatformEnabled;
+                _platform.OnColliderEnable += OnPlatformEnabled;
                 _platform.OnDispose += Dispose;
             }
 
@@ -71,7 +71,7 @@ namespace LKS.GameElements
             if (_activeForLevel)
             {
                 _platform.OnToggle -= OnPlatformToggle;
-                _platform.OnEnable -= OnPlatformEnabled;
+                _platform.OnColliderEnable -= OnPlatformEnabled;
                 _platform.OnDispose -= Dispose;
             }
         }

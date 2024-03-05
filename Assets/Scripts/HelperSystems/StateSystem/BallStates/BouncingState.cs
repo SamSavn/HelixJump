@@ -8,6 +8,7 @@ namespace LKS.States.BallStates
     {
 #region Constants & Fields
         private const float MAX_JUMP_HEIGHT = 2f;
+        private Vector3 _bounceStartPosition;
         private float _bounceForce;
         private bool _bounced;
 #endregion
@@ -45,10 +46,11 @@ namespace LKS.States.BallStates
             if (!_bounced)
             {
                 _bounced = true;
+                _bounceStartPosition = _ball.Position;
                 _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
                 _rigidbody.AddForce(new Vector3(0, _bounceForce / _rigidbody.mass, 0), ForceMode.VelocityChange); 
             }
-            else if (_ball.Position.y > MAX_JUMP_HEIGHT)
+            else if (_ball.Position.y - _bounceStartPosition.y > MAX_JUMP_HEIGHT)
             {
                 _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0, _rigidbody.velocity.z);
             }

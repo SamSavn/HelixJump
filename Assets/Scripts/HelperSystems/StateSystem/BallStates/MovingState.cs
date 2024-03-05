@@ -41,7 +41,7 @@ namespace LKS.States.BallStates
         public override void UpdateState()
         {
             _angle = _swipeInfo.Distance.x / Screen.width * 360f;
-            _rotationMultiplier = (_swipeInfo.Direction.x == Direction.Left) ? 1 : -1;
+            _rotationMultiplier = (_swipeInfo.Direction.x == Direction.Left) ? -1 : 1;
 
             _currentPosition = _ball.Position;
             _newPosition = Quaternion.Euler(0f, _rotationMultiplier * _angle * Time.deltaTime, 0f) * _currentPosition;

@@ -83,7 +83,7 @@ namespace LKS.GameElements
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return Id.GetHashCode();
         }
 #endregion
     }

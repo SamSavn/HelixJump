@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 551832965239764107}
   - component: {fileID: 5209466639915926523}
   - component: {fileID: 5527368623987251724}
+  - component: {fileID: 9139919867693534509}
   m_Layer: 11
   m_Name: FallZone
   m_TagString: Untagged
@@ -54,6 +55,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9139919867693534509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433549334550023545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac932e27e1dd8ce45ae5e18ce18acebb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _collider: {fileID: 5527368623987251724}
 --- !u!1 &7721314282282293326
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5dd4031a7267944a885127b999a223d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fallZone: {fileID: 5527368623987251724}
+  _fallZone: {fileID: 9139919867693534509}
   _segments:
   - {fileID: 8223085615635924637}
   - {fileID: 9011371735516793236}

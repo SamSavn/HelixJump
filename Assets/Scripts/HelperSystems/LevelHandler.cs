@@ -89,7 +89,7 @@ namespace LKS.Helpers
 
             _platformPosition = new Vector3(0f, _platformPositionY, 0f);
 
-            _randomRotationAngle = Random.Range(0f, 360f);
+            _randomRotationAngle = index == 0 ? 0 : Random.Range(0f, 360f);
             _platformRotation = new Vector3(0f, _randomRotationAngle, 0f);
 
             _newPlatform.transform.SetParent(_tower.transform, false);

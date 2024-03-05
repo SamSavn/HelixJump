@@ -47,11 +47,26 @@ namespace LKS.GameElements
             {
                 Bounce();
             }
+            else
+            {
+                Fall();
+            }
         }
 
         private void OnObstacleHit(Collision _)
         {
             Die();
+        }
+
+        private void OnFallZoneTrigger(Collider other)
+        {
+            FallZone fz = other.gameObject.GetComponent<FallZone>();
+
+            if(fz != null)
+            {
+                fz.OnHit();
+                Fall();
+            }
         }
 
         protected override void AddListeners()
@@ -65,8 +80,8 @@ namespace LKS.GameElements
         protected override void RemoveListeners()
         {
             base.RemoveListeners();
-            InputManager.OnSwipe += OnSwipe;
-            InputManager.OnInputUp += OnInputUp;
+            InputManager.OnSwipe -= OnSwipe;
+            InputManager.OnInputUp -= OnInputUp;
         }
 
         private void OnSwipe(SwipeInfo info)
@@ -157,9 +172,12 @@ namespace LKS.GameElements
 
         private void OnTriggerEnter(Collider other)
         {
+            if(other == null) 
+                return;
+
             if (LayerMaskManager.IsFallZone(other.gameObject))
             {
-                Fall();
+                OnFallZoneTrigger(other);
             }
         }
 #endregion

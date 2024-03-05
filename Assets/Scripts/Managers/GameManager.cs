@@ -3,6 +3,7 @@ using LKS.States;
 using LKS.States.BallStates;
 using LKS.States.GameStates;
 using LKS.States.TowerStates;
+using System;
 using UnityEngine;
 
 namespace LKS.Managers
@@ -10,6 +11,7 @@ namespace LKS.Managers
     public static class GameManager
     {
 #region Constants & Fields
+        public static event Action<BallState> BallStateChanged;
         private static StateMachine<GameState> _stateMachine;
 #endregion
 
@@ -52,15 +54,9 @@ namespace LKS.Managers
             if(state == null) 
                 return;
 
-            if (state.GetType() == typeof(FallingState))
-            {
-                Tower.Slide();
-            }
-            else if (state.GetType() == typeof(MovingState))
-            {
-                GameCamera.Move();
-            }
-            else if (state.GetType() == typeof(DeadState))
+            BallStateChanged?.Invoke(state);            
+            
+            if (state.GetType() == typeof(DeadState))
             {
                 StopGame();
             }

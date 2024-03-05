@@ -8,5 +8,11 @@ namespace LKS.States.TowerStates
         public IdleState(Tower tower) : base(tower)
         {
         }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            _tower.ResetSlideDuration();
+        }
     }
 }

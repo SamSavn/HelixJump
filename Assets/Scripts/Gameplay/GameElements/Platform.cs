@@ -4,7 +4,6 @@ using LKS.Managers;
 using LKS.States;
 using LKS.States.PlatformStates;
 using System;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,7 +13,7 @@ namespace LKS.GameElements
     {
 #region Constants & Fields
         public event Action<bool> OnToggle;
-        public event Action<bool> OnEnable;
+        public event Action<bool> OnColliderEnable;
         public event Action OnDispose;
 
         private LevelGenerationData _levelGenerationData;
@@ -32,7 +31,7 @@ namespace LKS.GameElements
 #endregion
 
 #region Serialized Fields
-        [SerializeField] private Collider _fallZone;
+        [SerializeField] private FallZone _fallZone;
         [SerializeField] private PlatformSegment[] _segments;
 #endregion
 
@@ -90,15 +89,13 @@ namespace LKS.GameElements
 
         public override void SetActive(bool active)
         {
-            _fallZone.enabled = active;
             OnToggle?.Invoke(active);
             base.SetActive(active);
         }
 
         public void SetEnabled(bool enabled)
         {
-            _fallZone.enabled = enabled;
-            OnEnable?.Invoke(enabled);
+            OnColliderEnable?.Invoke(enabled);
         }
 
         public void CheckIfEnable()
@@ -147,6 +144,23 @@ namespace LKS.GameElements
         private float GetObstaclesRandomizationFactor()
         {
             return Random.Range(_levelGenerationData.ObstaclesMinRandomizationFactor, _levelGenerationData.ObstaclesMaxRandomizationFactor);
+        }
+
+        protected override void AddListeners()
+        {
+            base.AddListeners();
+            _fallZone.OnBallEnter += OnBallEnterFallZone;
+        }
+
+        protected override void RemoveListeners()
+        {
+            base.RemoveListeners();
+            _fallZone.OnBallEnter -= OnBallEnterFallZone;
+        }
+
+        private void OnBallEnterFallZone()
+        {
+            SetEnabled(false);
         }
 
         private void OnSlideCompleted()
