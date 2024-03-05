@@ -1,3 +1,4 @@
+using LKS.Inputs;
 using LKS.Managers;
 using LKS.States;
 using LKS.States.BallStates;
@@ -52,9 +53,42 @@ namespace LKS.GameElements
         {
             Die();
         }
-#endregion
 
-#region States Methods
+        protected override void AddListeners()
+        {
+            base.AddListeners();
+            InputManager.OnSwipe += OnSwipe;
+            InputManager.OnInputUp += OnInputUp;
+
+        }
+
+        protected override void RemoveListeners()
+        {
+            base.RemoveListeners();
+            InputManager.OnSwipe += OnSwipe;
+            InputManager.OnInputUp += OnInputUp;
+        }
+
+        private void OnSwipe(SwipeInfo info)
+        {
+            if (!_stateMachine.HasState<MovingState>())
+            {
+                _stateMachine.AddState(new MovingState(this, info));
+            }
+            else
+            {
+                _stateMachine.GetCurrentState<MovingState>().UpdateInfo(info);
+                _stateMachine.UpdateState<MovingState>();
+            }
+        }
+
+        private void OnInputUp(InputInfo info)
+        {
+            _stateMachine.RemoveState<MovingState>();
+        }
+        #endregion
+
+        #region States Methods
         private void Bounce()
         {
             if (_stateMachine.HasState<BouncingState>())

@@ -57,7 +57,7 @@ namespace LKS.States
         {
             if (state != null && !CurrentStates.Contains(state))
             {
-                CurrentStates.Add(state); 
+                CurrentStates.Add(state);
                 state.OnEnter();
             }
         }
@@ -127,6 +127,14 @@ namespace LKS.States
             }
         }
 
+        public void UpdateState<T>() where T : TState
+        {
+            if(TryGetState(out T state))
+            {
+                state.UpdateState();
+            }
+        }
+
         public void UpdateStates()
         {
             if (!HasStates)
@@ -169,16 +177,6 @@ namespace LKS.States
 
             state = default(T);
             return false;
-        }
-
-        private void ReplaceState(TState state, TState newState)
-        {
-            if (HasStates)
-            {
-                RemoveState(state);
-            }
-
-            AddState(newState);
         }
 
         private void ExitAllStates()

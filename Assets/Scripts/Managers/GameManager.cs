@@ -56,6 +56,10 @@ namespace LKS.Managers
             {
                 Tower.Slide();
             }
+            else if (state.GetType() == typeof(MovingState))
+            {
+                GameCamera.Move();
+            }
             else if (state.GetType() == typeof(DeadState))
             {
                 StopGame();

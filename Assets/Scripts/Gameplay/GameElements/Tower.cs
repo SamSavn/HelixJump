@@ -45,6 +45,7 @@ namespace LKS.GameElements
 #region Unity Methods
         private void Awake()
         {
+            Position = Vector3.zero;
             _generationData = AddressablesLoader.LoadSingle<LevelGenerationData>(GENERATION_DATA_ADDRESS);
 
             if (_generationData == null)
@@ -148,8 +149,8 @@ namespace LKS.GameElements
         {
             base.AddListeners();
 
-            InputManager.OnSwipe += OnSwipe;
-            InputManager.OnInputUp += OnInputUp;
+            //InputManager.OnSwipe += OnSwipe;
+            //InputManager.OnInputUp += OnInputUp;
 
             if (_platformsIterator != null)
             {
@@ -161,8 +162,8 @@ namespace LKS.GameElements
         {
             base.RemoveListeners();
 
-            InputManager.OnSwipe -= OnSwipe;
-            InputManager.OnInputUp -= OnInputUp;
+            //InputManager.OnSwipe -= OnSwipe;
+            //InputManager.OnInputUp -= OnInputUp;
 
             if (_platformsIterator != null)
             {

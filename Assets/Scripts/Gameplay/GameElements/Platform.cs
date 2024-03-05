@@ -151,7 +151,7 @@ namespace LKS.GameElements
 
         private void OnSlideCompleted()
         {
-            _stateMachine.ChangeState(new IdleState(this, _levelGenerationData));
+            _stateMachine?.ChangeState(new IdleState(this, _levelGenerationData));
         }
 #endregion
     }
