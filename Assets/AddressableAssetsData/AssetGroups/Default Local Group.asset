@@ -47,6 +47,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - Data
+  - m_GUID: edcfcda3e539dd14593bab1d2573d9fc
+    m_Address: PlatformsEraser
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Collectibles
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7e70cd30ecbfa3d468d4c25cd27eb898, type: 2}
   m_SchemaSet:

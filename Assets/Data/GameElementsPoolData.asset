@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: GameElementsPoolData
   m_EditorClassIdentifier: 
   _platforms: 20
+  _platformErasers: 7
