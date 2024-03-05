@@ -108,12 +108,6 @@ namespace LKS.GameElements
             }
         }
 
-        public void Rotate(float angle)
-        {
-            _currentRotation = Quaternion.AngleAxis(angle * Time.deltaTime, Vector3.up);
-            Rotation = _currentRotation * Rotation;
-        }
-
         [ContextMenu("Slide")]
         public void Slide()
         {            
@@ -219,27 +213,6 @@ namespace LKS.GameElements
                 _platformsIterator.Add(newPlatform);
             }
         }
-
-        private void OnSwipe(SwipeInfo info)
-        {
-            if (!_stateMachine.HasState<RotatingState>())
-            {
-                _stateMachine.ChangeState(new RotatingState(this, info));
-            }
-            else
-            {
-                _stateMachine.GetCurrentState<RotatingState>().Update(info);
-                _stateMachine.UpdateStates();
-            }
-        }
-
-        private void OnInputUp(InputInfo _)
-        {
-            if (!_stateMachine.HasState<IdleState>())
-            {
-                _stateMachine.ChangeState(new IdleState(this)); 
-            }
-        }        
 #endregion
     }
 }
