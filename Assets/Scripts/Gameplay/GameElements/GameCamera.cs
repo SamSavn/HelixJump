@@ -3,21 +3,34 @@ using LKS.States;
 using LKS.States.CameraStates;
 using UnityEngine;
 
+using BallState = LKS.States.BallStates.BallState;
+using BallFallingState = LKS.States.BallStates.FallingState;
+
 namespace LKS.GameElements
 {
     public class GameCamera : GameElement
     {
+#region Constants & Fields
         private StateMachine<CameraState> _stateMachine;
+#endregion
+
+#region Serialized Fields
         [SerializeField] private Camera _camera;
+#endregion
 
+#region Properties
         public Vector3 CameraPosition => _camera.transform.position;
+#endregion
 
+#region Unity Methods
         private void Awake()
         {
-            _stateMachine = new StateMachine<CameraState>(new IdleState(this));
             GameManager.SetGameCamera(this);
+            _stateMachine = new StateMachine<CameraState>(new IdleState(this));
         }
+#endregion
 
+#region Public Methods
         public void Idle()
         {
             _stateMachine.ChangeState(new IdleState(this));
@@ -35,6 +48,16 @@ namespace LKS.GameElements
             }
         }
 
+        public void Fall()
+        {
+            if (!_stateMachine.HasState<FallingState>())
+            {
+                _stateMachine.ChangeState(new FallingState(this));
+            }
+        }
+#endregion
+
+#region Private Methods
         protected override void AddListeners()
         {
             base.AddListeners();
@@ -46,13 +69,20 @@ namespace LKS.GameElements
             GameManager.BallStateChanged -= OnBallStateChanged;
             base.RemoveListeners();
         }
+#endregion
 
-        private void OnBallStateChanged(States.BallStates.BallState state)
+#region Event Handlers
+        private void OnBallStateChanged(BallState state)
         {
-            if (state.GetType() == typeof(States.BallStates.MovingState))
+            if (state.GetType() == typeof(BallFallingState))
+            {
+                Fall();
+            }
+            else
             {
                 Move();
             }
-        }
+        } 
+#endregion
     }
 }

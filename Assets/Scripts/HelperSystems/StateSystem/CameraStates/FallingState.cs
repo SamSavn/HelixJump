@@ -1,21 +1,20 @@
-using LKS.Extentions;
 using LKS.GameElements;
-using LKS.GameUpdate;
-using LKS.Iterations;
 using LKS.Managers;
 using UnityEngine;
 
-namespace LKS.States.TowerStates
+namespace LKS.States.CameraStates
 {
-    public class SlidingState : TowerState
+    public class FallingState : CameraState
     {
         private Vector3 _startingPosition;
         private Vector3 _currentPosition;
+        private float _distanceFromBall;
 
-        public SlidingState(Tower tower) : base(tower)
+        public FallingState(GameCamera camera) : base(camera)
         {
-            _startingPosition = _tower.Position;
+            _startingPosition = _camera.Position;
             _currentPosition = _startingPosition;
+            _distanceFromBall = _startingPosition.y - GameManager.Ball.Position.y;
         }
 
         public override void OnEnter()
@@ -35,7 +34,7 @@ namespace LKS.States.TowerStates
             base.UpdateState();
 
             _currentPosition.y = _startingPosition.y + GameManager.Ball.Position.y;
-            _tower.Position = _currentPosition;
+            _camera.Position = _currentPosition;
         }
     }
 }

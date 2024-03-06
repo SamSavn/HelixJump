@@ -16,14 +16,14 @@ namespace LKS.States.BallStates
         {
             base.OnEnter();
 
-            _ball.Rigidbody.velocity = Vector3.zero;
-            _ball.Rigidbody.useGravity = false;
+            //_ball.Rigidbody.velocity = Vector3.zero;
+            //_ball.Rigidbody.useGravity = false;
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            _ball.Rigidbody.useGravity = true;
+            //_ball.Rigidbody.useGravity = true;
         }
 
         public override void UpdateState()

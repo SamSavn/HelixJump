@@ -11,6 +11,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 
+using BallState = LKS.States.BallStates.BallState;
+using BallFallState = LKS.States.BallStates.FallingState;
+using BallBounceState = LKS.States.BallStates.BouncingState;
+using System.Runtime.InteropServices;
+
 namespace LKS.GameElements
 {
     public class Tower : GameElement, IUpdatable
@@ -25,6 +30,7 @@ namespace LKS.GameElements
         private Iterator _platformsIterator; 
 
         private List<Platform> _platforms;
+        private Platform _topPlatform;
 
         private Quaternion _currentRotation;
 
@@ -35,12 +41,49 @@ namespace LKS.GameElements
 #endregion
 
 #region Serialized Fields
+        [SerializeField] private Transform _mesh;
         [SerializeField] private float _slidingDefaultDuration;
         [SerializeField] private float _slidingMinDuration;
         [SerializeField] private float _slidingDurationModifier;
 #endregion
 
 #region Properties
+        public override Vector3 Position 
+        { 
+            get => _mesh.position; 
+            set => _mesh.position = value; 
+        }
+
+        private Platform TopPlatform
+        {
+            get
+            {
+                if (_topPlatform != null)
+                {
+                    return _topPlatform;
+                }
+                else if (_platforms != null && _platforms.Count > 0)
+                {
+                    return _platforms[0];
+                }
+
+                return null;
+            }
+            set
+            {
+                if (value != null)
+                {
+                    _topPlatform = value;
+                }
+                else if (_platforms != null &&  _platforms.Count > 0)
+                {
+                    _topPlatform = _platforms[0];
+                }
+
+                _topPlatform = null;
+            }
+        }
+
         private float TopPosThreshold => Position.y + Scale.y;
         private float BottomPosThreshold => Position.y - Scale.y; 
         public float SlidingDuration => _currentSlideDuration;
@@ -67,8 +110,10 @@ namespace LKS.GameElements
         protected override void OnEnable()
         {
             _levelHandler ??= new LevelHandler(_generationData);
-            _platforms ??= _levelHandler?.Generate(this, _maxPlatforms);
+            _platforms ??= _levelHandler?.Generate(this, _maxPlatforms, out _topPlatform);
             _platformsIterator ??= new Iterator(_platforms);
+
+            TopPlatform = _topPlatform;
 
             Idle();
 
@@ -110,8 +155,11 @@ namespace LKS.GameElements
 
         [ContextMenu("Slide")]
         public void Slide()
-        {            
-            _stateMachine.ChangeState(new SlidingState(this, _platformsIterator));
+        {
+            if (!_stateMachine.HasState<SlidingState>())
+            {
+                _stateMachine.ChangeState(new SlidingState(this)); 
+            }
         }
 
         public void Idle()
@@ -131,6 +179,33 @@ namespace LKS.GameElements
             if (Input.GetKeyUp(KeyCode.Space))
             {
                 GameManager.StartGame();
+            }
+        }
+
+        public void CheckForLevelUpdate()
+        {
+            if (TopPlatform != null && !CanActivatePlatform(TopPlatform))
+            {
+                _platformsIterator.Remove(TopPlatform);
+                _levelHandler.UpdateLevel(out Platform newPlatform, out _topPlatform);
+                TopPlatform = _topPlatform;
+
+                if (newPlatform != null)
+                {
+                    _platformsIterator.Add(newPlatform);
+                }
+            }
+
+            Platform platform;
+            for (int i = 0; i < _platforms.Count; i++)
+            {
+                platform = _platforms[i];
+
+                if(platform == null)
+                    continue;
+
+                platform.SetActive(CanActivatePlatform(platform));
+                platform.CheckIfEnable();
             }
         }
 
@@ -183,16 +258,16 @@ namespace LKS.GameElements
 #endregion
 
 #region Event Handlers
-        private void OnBallStateChanged(States.BallStates.BallState state)
+        private void OnBallStateChanged(BallState state)
         {
-            if (state.GetType() == typeof(States.BallStates.FallingState))
+            if (state.GetType() == typeof(BallFallState))
             {
+                CheckForLevelUpdate();
                 Slide();
-                UpdateSlideDuration();
             }
-            else if (state.GetType() == typeof(States.BallStates.BouncingState))
+            else if (state.GetType() == typeof(BallBounceState))
             {
-                ResetSlideDuration();
+                Idle();                
             }
         }
 
@@ -206,7 +281,8 @@ namespace LKS.GameElements
             }
 
             _platformsIterator.Remove(topPlatform);
-            _levelHandler.UpdateLevel(out Platform newPlatform);
+            _levelHandler.UpdateLevel(out Platform newPlatform, out _topPlatform);
+            TopPlatform = _topPlatform;
 
             if (newPlatform != null)
             {

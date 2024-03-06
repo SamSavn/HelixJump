@@ -12,7 +12,7 @@ namespace LKS.States.TowerStates
         public override void OnEnter()
         {
             base.OnEnter();
-            _tower.ResetSlideDuration();
+            _tower.CheckForLevelUpdate();
         }
     }
 }

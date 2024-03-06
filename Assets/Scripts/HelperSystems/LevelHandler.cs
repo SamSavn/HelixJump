@@ -34,30 +34,39 @@ namespace LKS.Helpers
 #endregion
 
 #region Public Methods
-        public List<Platform> Generate(Tower tower, int platforms)
+        public List<Platform> Generate(Tower tower, int platforms, out Platform topPlatform)
         {
             _tower = tower;
+            topPlatform = null;
 
             for (int i = 0; i < platforms; i++)
             {
-                GeneratePlaform(i);
+                GeneratePlaform(i, out Platform newPlatform);
+
+                if(i == 0)
+                {
+                    topPlatform = newPlatform;
+                }
             }
 
             return _level;
         }
 
-        public void UpdateLevel(out Platform newPlatform)
+        public void UpdateLevel(out Platform newPlatform, out Platform topPlatform)
         {
             if (_level == null || _level.Count == 0)
             {
                 newPlatform = null;
+                topPlatform = null;
                 return;
             }
 
             PoolingManager.AddToPool(_level[0]);
             _level.RemoveAt(0);
 
-            GeneratePlaform(_level.Count);
+            GeneratePlaform(_level.Count, out _);
+
+            topPlatform = _level[0];
             newPlatform = _level[_level.Count - 1];
         }
 
@@ -71,12 +80,15 @@ namespace LKS.Helpers
 #endregion
 
 #region Private Methods
-        private void GeneratePlaform(int index)
+        private void GeneratePlaform(int index, out Platform platform)
         {
             _newPlatform = PoolingManager.GetFromPool<Platform>();
 
             if (_newPlatform == null)
+            {
+                platform = null;
                 return;
+            }
 
             if (_level.Count > 0)
             {
@@ -97,6 +109,7 @@ namespace LKS.Helpers
             _newPlatform.LocalScale = Vector3.one;            
             _newPlatform.Initialize(index, _tower, _levelGenerationData);
 
+            platform = _newPlatform;
             _level.Add(_newPlatform);
         }
 #endregion
